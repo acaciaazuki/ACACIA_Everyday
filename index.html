@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7faf8">
 <title>BrainBox+ — 把每一天，過得剛剛好</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap');
 :root{--ink:#263633;--muted:#8a9893;--sage:#4a987b;--sage-light:#eaf6ef;--sage-dark:#3d876c;--mint:#dff2e9;--line:#edf1ee;--paper:#fff;--bg:#f7faf8;--shadow:0 12px 36px #29483a0b;--shadow-sm:0 2px 8px #29483a08;--nav-w:240px;--radius:14px;--radius-sm:10px;--tr:.2s ease}
@@ -21,7 +19,7 @@ button{cursor:pointer;color:inherit;background:none}
 .shell{display:flex;min-height:100vh}
 
 /* ═══ Sidebar ═══ */
-.sidebar{position:fixed;inset:0 auto 0 0;width:var(--nav-w);padding:24px 16px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20}
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--nav-w);padding:24px 16px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:10}
 .brand{display:flex;align-items:center;gap:11px;padding:4px 10px 28px;font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--ink)}
 .brandmark{width:36px;height:36px;border-radius:12px;background:var(--mint);color:var(--sage);display:grid;place-items:center;font-size:18px}
 .nav-label{font-size:10px;color:#a4afaa;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:16px 12px 8px}
@@ -38,7 +36,7 @@ button{cursor:pointer;color:inherit;background:none}
 .profile-info small{font-size:10px;color:var(--muted)}
 
 /* ═══ Mobile Bottom Nav ═══ */
-.mobile-nav{display:none;position:fixed;inset:auto 0 0 0;background:#fff;border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:40;justify-content:space-around;box-shadow:0 -4px 20px #29483a08}
+.mobile-nav{display:none;position:fixed;inset:auto 0 0 0;background:#fff;border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:30;justify-content:space-around;box-shadow:0 -4px 20px #29483a08}
 .mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#8a9893;padding:4px 12px;border-radius:10px;transition:var(--tr)}
 .mobile-nav button .m-ico{font-size:17px}
 .mobile-nav button.active{color:var(--sage-dark);background:var(--sage-light)}
@@ -59,7 +57,7 @@ button{cursor:pointer;color:inherit;background:none}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin:16px 0 22px;gap:12px;flex-wrap:wrap}
 .eyebrow{font-size:11px;color:#87958e;letter-spacing:.4px;margin-bottom:6px}
 .page-head h1{font-size:28px;line-height:1.15;letter-spacing:-.8px;font-weight:700}
-.head-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.head-actions{display:flex;align-items:center;gap:8px}
 .pill-btn{border:1px solid var(--line);background:#fff;border-radius:var(--radius-sm);padding:9px 14px;color:#718078;font-size:12px;font-weight:500;transition:var(--tr)}
 .pill-btn:hover,.pill-btn.active{background:var(--sage-light);border-color:#c5ddd0;color:var(--sage-dark);font-weight:600}
 .primary-btn{border-radius:var(--radius-sm);background:var(--sage);color:white;padding:10px 16px;font-size:12px;font-weight:700;box-shadow:0 4px 12px #4a987b22;transition:var(--tr)}
@@ -149,76 +147,63 @@ button{cursor:pointer;color:inherit;background:none}
 .cal-ev:hover{opacity:.85;transform:translateY(-1px)}
 .cal-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11px;color:#839088}
 
-/* ═══ MAP (Real Leaflet + Illustrated Buildings + Notes) ═══ */
-.map-layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
-.mapbox{height:580px;position:relative;overflow:hidden;border-radius:16px;border:1px solid #dce6de;background:#eef2ef;z-index:1}
-#leaflet-map{width:100%;height:100%;z-index:1;font-family:inherit}
-.leaflet-control-attribution{font-size:9px !important;background:rgba(255,255,255,.75) !important;border-radius:6px 0 0 0}
-.map-searchbar{position:absolute;z-index:500;left:14px;top:14px;width:min(320px,calc(100% - 70px));height:42px;border-radius:12px;background:white;box-shadow:0 4px 16px #3458421f;display:flex;align-items:center;padding:0 14px;gap:8px;border:1px solid #edf1ee}
+/* ═══ MAP (Google Maps + Illustrated Buildings) ═══ */
+.map-layout{display:grid;grid-template-columns:1fr 310px;gap:16px}
+.mapbox{height:540px;position:relative;overflow:hidden;border-radius:16px;border:1px solid #dce6de;background:#f3f5f0;user-select:none}
+.map-canvas{position:absolute;inset:-40px;transition:transform .25s ease;transform-origin:center center}
+.map-svg-bg{width:100%;height:100%;display:block}
+.map-searchbar{position:absolute;z-index:4;left:16px;top:16px;width:min(330px,calc(100% - 76px));height:42px;border-radius:12px;background:white;box-shadow:0 4px 16px #3458421a;display:flex;align-items:center;padding:0 14px;gap:8px}
 .map-searchbar input{border:0;width:100%;font-size:12px}
-.map-filters{position:absolute;z-index:500;top:64px;left:14px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 70px)}
-.map-filter{background:#fff;border-radius:20px;padding:6px 11px;font-size:10px;box-shadow:0 2px 8px #30493718;color:#69776f;font-weight:600;transition:var(--tr);border:1px solid #f0f3f1}
+.map-filters{position:absolute;z-index:4;top:66px;left:16px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 76px)}
+.map-filter{background:#fff;border-radius:20px;padding:6px 11px;font-size:10px;box-shadow:0 2px 8px #30493714;color:#69776f;font-weight:600;transition:var(--tr)}
 .map-filter:hover{background:var(--sage-light)}
-.map-filter.on{background:var(--sage);color:white;border-color:var(--sage)}
+.map-filter.on{background:var(--sage);color:white}
 
-/* Custom Leaflet Illustrated Marker */
-.bb-leaflet-icon{background:none !important;border:none !important}
-.bldg-pin-wrap{display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-82%);cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.bldg-pin-wrap:hover{transform:translate(-50%,-86%) scale(1.08);z-index:999}
-.bldg-pin-wrap.active{transform:translate(-50%,-90%) scale(1.14);z-index:1000}
-.bldg-card{position:relative;width:50px;height:50px;border-radius:15px;background:#fff;box-shadow:0 6px 16px #253d312e;border:2.5px solid #fff;display:grid;place-items:center}
-.bldg-pin-wrap.active .bldg-card{border-color:var(--sage);box-shadow:0 8px 22px #4a987b55;background:#f7fcf9}
-.bldg-card svg{width:34px;height:34px}
-.bldg-label{margin-top:3px;background:#fffffff2;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;color:#2f403b;box-shadow:0 2px 6px #253d3122;white-space:nowrap}
-.bldg-pin-wrap.active .bldg-label{background:var(--sage);color:#fff}
-.bldg-fav{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:#ef4444;border:2px solid #fff;color:#fff;font-size:8px;display:grid;place-items:center}
-.bldg-note-dot{position:absolute;bottom:-4px;left:-4px;width:15px;height:15px;border-radius:50%;background:#f59e0b;border:2px solid #fff;color:#fff;font-size:8px;display:grid;place-items:center}
+/* Illustrated Building Markers */
+.bldg-marker{position:absolute;z-index:3;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.bldg-marker:hover{transform:translate(-50%,-54%) scale(1.08);z-index:5}
+.bldg-marker.active{transform:translate(-50%,-56%) scale(1.13);z-index:6}
+.bldg-card{position:relative;width:54px;height:54px;border-radius:16px;background:#fff;box-shadow:0 6px 16px #253d3124;border:2.5px solid #fff;display:grid;place-items:center;transition:var(--tr)}
+.bldg-marker.active .bldg-card{border-color:var(--sage);box-shadow:0 8px 22px #4a987b44;background:#f7fcf9}
+.bldg-card svg{width:38px;height:38px}
+.bldg-label{margin-top:4px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;color:#2f403b;box-shadow:0 2px 6px #253d3118;white-space:nowrap}
+.bldg-marker.active .bldg-label{background:var(--sage);color:#fff}
+.bldg-fav{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:#ef4444;border:2px solid #fff;color:#fff;font-size:8px;display:grid;place-items:center;box-shadow:0 2px 4px #0002}
 
-/* User GPS Marker */
-.gps-marker-wrap{position:relative;width:40px;height:40px;display:grid;place-items:center;transform:translate(-50%,-50%)}
-.gps-pulse{position:absolute;width:40px;height:40px;border-radius:50%;background:#3b82f640;animation:gpsPulse 2s infinite}
-.gps-dot{width:15px;height:15px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 2px 8px #1d4ed888;z-index:2}
-@keyframes gpsPulse{0%{transform:scale(.5);opacity:.95}100%{transform:scale(1.6);opacity:0}}
+/* User GPS Blue Dot */
+.user-gps{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:3;display:none;place-items:center;pointer-events:none}
+.user-gps.show{display:grid}
+.gps-pulse{position:absolute;width:44px;height:44px;border-radius:50%;background:#3b82f633;animation:gpsPulse 2s infinite}
+.gps-dot{width:15px;height:15px;border-radius:50%;background:#2563eb;border:2.5px solid #fff;box-shadow:0 2px 8px #1d4ed866;z-index:1}
+@keyframes gpsPulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
 
-.map-controls{position:absolute;right:14px;top:14px;display:grid;gap:6px;z-index:500}
-.map-ctrl{width:36px;height:36px;border-radius:10px;background:#fff;box-shadow:0 3px 10px #344b3d22;font-size:14px;font-weight:700;color:#718078;transition:var(--tr);display:grid;place-items:center;border:1px solid #edf1ee}
+.map-controls{position:absolute;right:14px;top:16px;display:grid;gap:6px;z-index:4}
+.map-ctrl{width:36px;height:36px;border-radius:10px;background:#fff;box-shadow:0 3px 10px #344b3d18;font-size:14px;font-weight:700;color:#718078;transition:var(--tr);display:grid;place-items:center}
 .map-ctrl:hover{background:var(--sage-light);color:var(--sage)}
 .map-ctrl.locating{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.map-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#fffffff0;padding:6px 14px;border-radius:20px;color:#69776f;font-size:10px;box-shadow:0 2px 10px #344b3d18;white-space:nowrap;z-index:500;font-weight:500}
-.map-hint.adding{background:var(--sage);color:#fff;font-weight:700}
-.map-loc-status{position:absolute;top:14px;right:58px;background:#fff;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:600;box-shadow:var(--shadow-sm);z-index:500;display:none}
+.map-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:#ffffffea;padding:6px 14px;border-radius:20px;color:#7a8880;font-size:10px;box-shadow:0 2px 10px #344b3d14;white-space:nowrap;z-index:4}
+.map-loc-status{position:absolute;top:16px;right:58px;background:#fff;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;box-shadow:var(--shadow-sm);z-index:4;display:none}
 
-/* Map sidebar & Place Note Editor */
-.places-card{padding:16px;display:flex;flex-direction:column;height:580px;overflow:hidden}
-.places-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+/* Map sidebar */
+.places-card{padding:16px;display:flex;flex-direction:column;max-height:540px;overflow:hidden}
+.places-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .places-head h3{font-size:13px;font-weight:700;margin:0}
 .places-head small{font-size:10px;color:#9aa59f}
-.place-list{overflow-y:auto;display:grid;gap:6px;flex:1;padding-right:2px;align-content:start}
-.place-item{padding:10px;border:1px solid #f0f3f1;border-radius:var(--radius-sm);display:flex;gap:10px;align-items:flex-start;cursor:pointer;transition:var(--tr)}
+.place-list{overflow-y:auto;display:grid;gap:6px;flex:1;padding-right:2px}
+.place-item{padding:10px;border:1px solid #f0f3f1;border-radius:var(--radius-sm);display:flex;gap:10px;align-items:center;cursor:pointer;transition:var(--tr)}
 .place-item:hover,.place-item.chosen{background:#f5faf6;border-color:#c6e2d1}
-.place-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;margin-top:1px}
+.place-icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
 .place-icon svg{width:26px;height:26px}
 .place-info{min-width:0;flex:1}
 .place-info strong{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.place-info small{font-size:10px;color:#9aa59f;display:block;margin-top:1px}
-.place-note-chip{margin-top:5px;padding:3px 7px;border-radius:6px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:10px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.heart-btn{color:#b1bbb5;font-size:16px;padding:2px 4px;transition:var(--tr)}
+.place-info small{font-size:10px;color:#9aa59f}
+.heart-btn{color:#b1bbb5;font-size:16px;padding:4px;transition:var(--tr)}
 .heart-btn:hover{color:#e38b82}
 .heart-btn.saved{color:#ef4444}
-
-.place-detail{margin-top:10px;padding-top:12px;border-top:1px solid var(--line);background:#fcfefd;border-radius:12px}
-.place-detail-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:6px}
-.place-detail-head h4{margin:0;font-size:13px;font-weight:700}
-.place-detail p{font-size:11px;color:#7e8b85;margin:0 0 8px;line-height:1.45}
-.note-editor-box{background:#f7faf8;border:1px solid #e3ece7;border-radius:10px;padding:8px 10px;margin-bottom:9px}
-.note-editor-label{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:700;color:#5a7568;margin-bottom:5px}
-.note-editor-box textarea{width:100%;background:#fff;border:1px solid #e2ebe6;border-radius:7px;padding:6px 8px;font-size:11px;color:var(--ink);resize:none;min-height:52px;line-height:1.4}
-.note-editor-box textarea:focus{border-color:var(--sage)}
-.note-editor-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
-.note-save-btn{background:var(--sage);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px}
-.note-save-btn:hover{background:var(--sage-dark)}
-.detail-btn-row{display:flex;gap:6px}
+.place-detail{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.place-detail h4{margin:0 0 4px;font-size:13px;display:flex;align-items:center;justify-content:space-between}
+.place-detail p{font-size:11px;color:#7e8b85;margin:0 0 10px;line-height:1.5}
 
 /* ═══ TASKS full page ═══ */
 .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -240,7 +225,7 @@ button{cursor:pointer;color:inherit;background:none}
 .task-edit-input{border:0;background:none;font-size:12px;font-weight:600;color:var(--ink);width:100%;outline:none}
 
 /* ═══ Modal & Command Palette ═══ */
-.modal-backdrop{position:fixed;inset:0;background:#1d302858;display:none;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal-backdrop{position:fixed;inset:0;background:#1d302858;display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-backdrop.open{display:flex}
 .modal{width:min(480px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 20px 60px #17362933;max-height:90vh;overflow-y:auto}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
@@ -277,7 +262,7 @@ button{cursor:pointer;color:inherit;background:none}
 .cmd-sub{font-size:11px;color:#9aa59f}
 
 /* ═══ Toast ═══ */
-.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:#263f34;color:#fff;border-radius:var(--radius-sm);padding:10px 18px;font-size:12px;font-weight:500;opacity:0;transition:.3s;pointer-events:none;z-index:2000;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:#263f34;color:#fff;border-radius:var(--radius-sm);padding:10px 18px;font-size:12px;font-weight:500;opacity:0;transition:.3s;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
 /* ═══ Empty ═══ */
@@ -291,7 +276,7 @@ button{cursor:pointer;color:inherit;background:none}
 .input-bar button{width:32px;height:32px;border-radius:8px;background:var(--sage);color:white;font-size:14px;display:grid;place-items:center}
 
 /* ═══ Responsive ═══ */
-@media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.map-layout{grid-template-columns:1fr}.places-card{height:auto;max-height:none}.side-stack{grid-template-columns:1fr 1fr}}
+@media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.map-layout{grid-template-columns:1fr}.places-card{max-height:none}.side-stack{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.mapbox{height:420px}.toast{bottom:76px}}
 </style>
 </head>
@@ -433,58 +418,73 @@ button{cursor:pointer;color:inherit;background:none}
   <section class="view" id="map">
     <div class="page-head">
       <div>
-        <p class="eyebrow">真實定位周邊 · 收藏地點可寫私人筆記</p>
+        <p class="eyebrow">附近有什麼好去處？</p>
         <h1>探索地圖 🗺️</h1>
       </div>
       <div class="head-actions">
         <button class="pill-btn" id="fav-filter-btn" onclick="toggleFavOnly()">♡　喜好地點</button>
-        <button class="pill-btn" id="add-pin-btn" onclick="toggleAddPinMode()">＋　釘選新地點</button>
-        <button class="primary-btn" id="locate-btn" onclick="locateMe()">⌖　精準定位</button>
+        <button class="primary-btn" id="locate-btn" onclick="locateMe()">⌖　定位我</button>
       </div>
     </div>
     <div class="map-layout">
       <div class="mapbox" id="mapbox">
-        <div id="leaflet-map"></div>
-        <div class="map-searchbar">⌕ <input id="map-search-input" placeholder="搜尋店名、類別或你的私人備註…" oninput="renderMapMarkers();renderPlaceList()"></div>
+        <div class="map-canvas" id="map-canvas">
+          <!-- Google Maps Styled Illustrated Vector Map -->
+          <svg class="map-svg-bg" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid slice">
+            <rect width="800" height="560" fill="#f3f5f1"/>
+            <!-- City Blocks -->
+            <rect x="40" y="40" width="210" height="150" rx="18" fill="#eaece6"/>
+            <rect x="280" y="30" width="230" height="140" rx="18" fill="#eaece6"/>
+            <rect x="540" y="40" width="140" height="180" rx="18" fill="#eaece6"/>
+            <rect x="40" y="220" width="180" height="140" rx="18" fill="#eaece6"/>
+            <rect x="460" y="210" width="210" height="150" rx="18" fill="#eaece6"/>
+            <rect x="40" y="390" width="190" height="130" rx="18" fill="#eaece6"/>
+            <rect x="480" y="390" width="180" height="130" rx="18" fill="#eaece6"/>
+            <!-- Central Green Park -->
+            <path d="M245,215 Q340,195 430,225 Q450,310 420,375 Q320,395 240,360 Q225,280 245,215 Z" fill="#d3ebd5"/>
+            <circle cx="290" cy="270" r="14" fill="#b7ddb9"/>
+            <circle cx="385" cy="325" r="18" fill="#b7ddb9"/>
+            <circle cx="345" cy="255" r="11" fill="#b7ddb9"/>
+            <!-- River on East -->
+            <path d="M710,0 C680,140 735,280 690,420 C675,470 695,520 715,560 L800,560 L800,0 Z" fill="#cbe5f6"/>
+            <path d="M710,0 C680,140 735,280 690,420 C675,470 695,520 715,560" fill="none" stroke="#b5d8f0" stroke-width="4"/>
+            <!-- Secondary Roads -->
+            <path d="M0,200 L720,185" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+            <path d="M0,375 L700,375" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+            <path d="M260,0 L235,560" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+            <path d="M525,0 L465,560" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+            <!-- Main Yellow Highway -->
+            <path d="M-20,110 Q360,165 760,265" fill="none" stroke="#f7dfa4" stroke-width="18" stroke-linecap="round"/>
+            <path d="M-20,110 Q360,165 760,265" fill="none" stroke="#fff7e2" stroke-width="12" stroke-linecap="round"/>
+            <!-- Road Labels -->
+            <text x="115" y="196" fill="#95a19b" font-size="10" font-weight="600">松風大道</text>
+            <text x="305" y="305" fill="#6b9c70" font-size="11" font-weight="700">中央森林公園</text>
+            <text x="560" y="371" fill="#95a19b" font-size="10" font-weight="600">河畔路</text>
+          </svg>
+          <div id="map-pins"></div>
+          <div class="user-gps" id="user-gps" title="你的目前位置">
+            <div class="gps-pulse"></div>
+            <div class="gps-dot"></div>
+          </div>
+        </div>
+
+        <div class="map-searchbar">⌕ <input id="map-search-input" placeholder="搜尋咖啡店、服飾、餐廳或醫院…" oninput="filterPlaces(this.value)"></div>
         <div class="map-filters" id="map-filters"></div>
         <div class="map-controls">
-          <button class="map-ctrl" onclick="leafletMap && leafletMap.zoomIn()" title="放大">＋</button>
-          <button class="map-ctrl" onclick="leafletMap && leafletMap.zoomOut()" title="縮小">−</button>
-          <button class="map-ctrl" id="loc-ctrl" onclick="locateMe()" title="精準定位我">⌖</button>
+          <button class="map-ctrl" onclick="zoomMap(0.15)" title="放大">＋</button>
+          <button class="map-ctrl" onclick="zoomMap(-0.15)" title="縮小">−</button>
+          <button class="map-ctrl" id="loc-ctrl" onclick="locateMe()" title="定位我">⌖</button>
         </div>
         <div class="map-loc-status" id="loc-status"></div>
-        <div class="map-hint" id="map-hint">點按「精準定位」取得你的真實位置與距離</div>
+        <div class="map-hint">點擊插畫建築查看詳情 · 支援縮放與收藏</div>
       </div>
-
       <aside class="card places-card">
-        <div class="places-head">
-          <h3>附近與收藏地點</h3>
-          <small id="place-count-label">依距離排序</small>
-        </div>
+        <div class="places-head"><h3>附近的好地方</h3><small id="place-count-label">依距離排序</small></div>
         <div class="place-list" id="place-list"></div>
-
-        <div class="place-detail" id="place-detail-box">
-          <div class="place-detail-head">
-            <h4 id="detail-name">選擇一個地點</h4>
-            <button class="heart-btn" id="detail-heart-btn" style="display:none" onclick="toggleFavSelected()" title="加入或取消喜好地點">♡</button>
-          </div>
-          <p id="detail-desc">點擊地圖上的插畫建築或上方列表查看詳情與編輯私人備註</p>
-
-          <div class="note-editor-box" id="note-editor-box" style="display:none">
-            <div class="note-editor-label">
-              <span>📝 私人備註 / 探店筆記</span>
-              <span id="note-saved-hint" style="color:var(--sage);font-weight:500"></span>
-            </div>
-            <textarea id="place-note-input" placeholder="寫下必點品項、插座多寡、營業時間提醒或想跟誰一起去…"></textarea>
-            <div class="note-editor-actions">
-              <button class="note-save-btn" onclick="savePlaceNote()">儲存備註</button>
-            </div>
-          </div>
-
-          <div class="detail-btn-row">
-            <button class="primary-btn" style="flex:1" onclick="navigateSelectedPlace()">Google Maps 導航　↗</button>
-            <button class="danger-btn" id="detail-del-btn" style="display:none;padding:10px 12px" onclick="deleteSelectedCustomPlace()" title="刪除此自訂地點">🗑️</button>
-          </div>
+        <div class="place-detail">
+          <h4 id="detail-name"><span>選擇一個地點</span></h4>
+          <p id="detail-desc">點擊地圖上的插畫建築或右側列表查看詳細資訊</p>
+          <button class="primary-btn" style="width:100%" onclick="navigateSelectedPlace()">開始導航路線　↗</button>
         </div>
       </aside>
     </div>
@@ -551,38 +551,12 @@ button{cursor:pointer;color:inherit;background:none}
   </div>
 </div>
 
-<!-- ═══ Add Custom Place Modal ═══ -->
-<div class="modal-backdrop" id="place-modal">
-  <div class="modal">
-    <div class="modal-head"><h2>📍 新增喜好地點</h2><button class="close-btn" onclick="closePlaceModal()">×</button></div>
-    <div class="field"><label>地點名稱</label><input id="new-place-name" placeholder="例如：巷口手沖咖啡"></div>
-    <div class="form-row">
-      <div class="field"><label>類別</label>
-        <select id="new-place-cat">
-          <option value="咖啡|coffee|#f6e7d8">☕ 咖啡廳</option>
-          <option value="服飾|clothing|#fff0f3">👗 服飾選物</option>
-          <option value="餐廳|restaurant|#fff8e7">🍜 餐廳美食</option>
-          <option value="公園|park|#edf5eb">🌳 公園綠地</option>
-          <option value="醫院|hospital|#ebf4ff">🏥 醫療診所</option>
-          <option value="超市|market|#f1f8f4">🛍️ 超市商店</option>
-        </select>
-      </div>
-      <div class="field"><label>座標位置</label><input id="new-place-coords" readonly style="background:#f7faf8;color:#7e8b85"></div>
-    </div>
-    <div class="field"><label>📝 私人備註（選填）</label><textarea id="new-place-note" rows="3" placeholder="記錄推薦餐點、優惠或小提醒…"></textarea></div>
-    <div class="modal-foot">
-      <button class="ghost-btn" onclick="closePlaceModal()">取消</button>
-      <button class="primary-btn" onclick="saveNewPlace()">加入地圖並收藏 ♡</button>
-    </div>
-  </div>
-</div>
-
 <!-- ═══ Global Search Modal (⌘K) ═══ -->
 <div class="modal-backdrop" id="cmd-modal">
   <div class="modal cmd-modal">
     <div class="cmd-input-wrap">
       <span style="font-size:16px;color:var(--sage)">⌕</span>
-      <input id="cmd-input" placeholder="搜尋行程、待辦事項、購物清單或地點備註..." oninput="renderCmdResults(this.value)">
+      <input id="cmd-input" placeholder="搜尋行程、待辦事項、購物清單或地點..." oninput="renderCmdResults(this.value)">
       <button class="close-btn" onclick="closeCmdModal()">×</button>
     </div>
     <div class="cmd-results" id="cmd-results"></div>
@@ -592,7 +566,7 @@ button{cursor:pointer;color:inherit;background:none}
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══ Local Date Helper ═══
+// ═══ Local Date Helper (Timezone Safe) ═══
 function toLocalISO(d = new Date()) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -610,66 +584,37 @@ const BLDG_SVGS = {
   market: `<svg viewBox="0 0 48 48" fill="none"><rect x="8" y="18" width="32" height="24" rx="3" fill="#F1F8F4" stroke="#3E6B56" stroke-width="2"/><path d="M6 18L10 10H38L42 18H6Z" fill="#52B788" stroke="#3E6B56" stroke-width="2" stroke-linejoin="round"/><rect x="13" y="24" width="10" height="10" rx="1.5" fill="#D8F3DC" stroke="#3E6B56" stroke-width="1.5"/><rect x="27" y="26" width="8" height="16" rx="1.5" fill="#74C69D" stroke="#3E6B56" stroke-width="1.5"/></svg>`
 };
 
-// ═══ Default Real-World Coordinates (Taichung Xitun District) ═══
-const DEFAULT_CENTER = { lat: 24.1632, lng: 120.6412 };
-const DEFAULT_PLACES = [
-  {id:1,name:'小日子咖啡（西屯店）',cat:'咖啡',type:'coffee',bg:'#f6e7d8',lat:24.1658,lng:120.6389,desc:'陽光灑落的轉角手沖咖啡館，靠窗位有插座。',hours:'08:30–20:00'},
-  {id:2,name:'日和選物服飾',cat:'服飾',type:'clothing',bg:'#fff0f3',lat:24.1669,lng:120.6445,desc:'日系棉麻穿搭與生活雜貨選物店，質感溫柔。',hours:'11:00–21:30'},
-  {id:3,name:'好好食堂',cat:'餐廳',type:'restaurant',bg:'#fff8e7',lat:24.1614,lng:120.6451,desc:'手作定食與暖胃湯品，每日更換季節小菜。',hours:'11:30–21:00'},
-  {id:4,name:'秋紅谷生態公園',cat:'公園',type:'park',bg:'#edf5eb',lat:24.1674,lng:120.6398,desc:'下沉式綠地步道與湖畔微風，適合午後散步放空。',hours:'全天開放'},
-  {id:5,name:'澄清綜合醫院（中港院區）',cat:'醫院',type:'hospital',bg:'#ebf4ff',lat:24.1786,lng:120.6185,desc:'西屯區大型綜合醫院，家醫科與牙科門診齊全。',hours:'08:00–21:30'},
-  {id:6,name:'日常生鮮超市',cat:'超市',type:'market',bg:'#f1f8f4',lat:24.1592,lng:120.6368,desc:'有機蔬果、燕麥奶與生活日用品一次補齊。',hours:'07:00–23:00'}
-];
-
 // ═══ Unified State ═══
 const S = {
-  events: JSON.parse(localStorage.getItem('bb4_events') || '[]'),
-  tasks: JSON.parse(localStorage.getItem('bb4_tasks') || '[]'),
-  shopping: JSON.parse(localStorage.getItem('bb4_shop') || '[]'),
-  favorites: JSON.parse(localStorage.getItem('bb4_favs') || '[]'),
-  placeNotes: JSON.parse(localStorage.getItem('bb4_place_notes') || '{}'),
-  customPlaces: JSON.parse(localStorage.getItem('bb4_custom_places') || '[]'),
+  events: JSON.parse(localStorage.getItem('bb3_events') || '[]'),
+  tasks: JSON.parse(localStorage.getItem('bb3_tasks') || '[]'),
+  shopping: JSON.parse(localStorage.getItem('bb3_shop') || '[]'),
+  favorites: JSON.parse(localStorage.getItem('bb3_favs') || '[]'),
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
   calSelDay: new Date().getDate(),
   editEvId: null,
   evTitleColor: '#263633',
   evBgColor: '#eaf6ef',
+  mapZoom: 1,
   mapCat: '全部',
   favOnly: false,
-  selectedPlaceId: null,
-  userLoc: null,
-  addingPinMode: false,
-  pendingCoords: null
+  selectedPlaceId: null
 };
 
 const TITLE_COLORS = ['#263633','#55645d','#ef4444','#f97316','#d97706','#15803d','#1d4ed8','#7e22ce','#be185d','#ffffff'];
 const BG_COLORS = ['#eaf6ef','#fff4f1','#f0f4fb','#fff8e8','#f3edfa','#fef2f2','#91a6cf','#e6a18e','#77b494'];
 
-let leafletMap = null;
-let leafletMarkers = {};
-let userGpsMarker = null;
-let userAccuracyCircle = null;
+const PLACES = [
+  {id:1,name:'小日子咖啡',cat:'咖啡',type:'coffee',bg:'#f6e7d8',x:'26%',y:'27%',dist:'350 m',desc:'陽光灑落的轉角手沖咖啡館，提供安靜插座與肉桂捲。',hours:'08:30–20:00'},
+  {id:2,name:'日和選物服飾',cat:'服飾',type:'clothing',bg:'#fff0f3',x:'41%',y:'22%',dist:'440 m',desc:'日系棉麻穿搭與生活雜貨選物店，質感溫柔。',hours:'11:00–21:30'},
+  {id:3,name:'好好食堂',cat:'餐廳',type:'restaurant',bg:'#fff8e7',x:'61%',y:'35%',dist:'520 m',desc:'手作定食與暖胃湯品，每日更換季節小菜。',hours:'11:30–21:00'},
+  {id:4,name:'中央森林公園',cat:'公園',type:'park',bg:'#edf5eb',x:'42%',y:'53%',dist:'650 m',desc:'大片綠蔭草地與木棧步道，適合午後散步放空。',hours:'全天開放'},
+  {id:5,name:'安心綜合醫院',cat:'醫院',type:'hospital',bg:'#ebf4ff',x:'73%',y:'64%',dist:'850 m',desc:'社區家庭醫學與牙科門診，掛號動線清晰友善。',hours:'08:00–21:30'},
+  {id:6,name:'日常生鮮超市',cat:'超市',type:'market',bg:'#f1f8f4',x:'22%',y:'73%',dist:'1.1 km',desc:'有機蔬果、燕麥奶與生活日用品一次補齊。',hours:'07:00–23:00'}
+];
 
-function getAllPlaces() {
-  return [...DEFAULT_PLACES, ...S.customPlaces];
-}
-
-// ═══ Distance Calculator (Haversine) ═══
-function calcDistanceMeters(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const toRad = x => x * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-function formatDist(meters) {
-  if (meters < 1000) return `${Math.round(meters)} m`;
-  return `${(meters / 1000).toFixed(1)} km`;
-}
-
-// ═══ Navigation ═══
+// ═══ Navigation (Desktop + Mobile) ═══
 const crumbNames = {today:'今天',calendar:'行事曆',map:'探索地圖',tasks:'稍後辦'};
 document.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => showView(b.dataset.v)));
 
@@ -679,10 +624,7 @@ function showView(id) {
   document.getElementById('crumb-text').textContent = crumbNames[id] || id;
   if (id === 'today') initToday();
   if (id === 'calendar') renderCalendar();
-  if (id === 'map') {
-    initLeafletMap();
-    setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 80);
-  }
+  if (id === 'map') renderMap();
   if (id === 'tasks') { renderFullTasks(); renderFullShop(); }
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
@@ -693,15 +635,13 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2400);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
 }
 function save() {
-  localStorage.setItem('bb4_events', JSON.stringify(S.events));
-  localStorage.setItem('bb4_tasks', JSON.stringify(S.tasks));
-  localStorage.setItem('bb4_shop', JSON.stringify(S.shopping));
-  localStorage.setItem('bb4_favs', JSON.stringify(S.favorites));
-  localStorage.setItem('bb4_place_notes', JSON.stringify(S.placeNotes));
-  localStorage.setItem('bb4_custom_places', JSON.stringify(S.customPlaces));
+  localStorage.setItem('bb3_events', JSON.stringify(S.events));
+  localStorage.setItem('bb3_tasks', JSON.stringify(S.tasks));
+  localStorage.setItem('bb3_shop', JSON.stringify(S.shopping));
+  localStorage.setItem('bb3_favs', JSON.stringify(S.favorites));
 }
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -789,7 +729,10 @@ function submitQuickTask() {
   const v = inp.value.trim();
   if (!v) return;
   S.tasks.unshift({id: Date.now(), title: v, done: false, tag: '今日'});
-  save(); renderSidebarTasks(); updateStats(); toggleQuickTask(false);
+  save();
+  renderSidebarTasks();
+  updateStats();
+  toggleQuickTask(false);
   toast('已新增待辦 ✨');
 }
 
@@ -916,7 +859,10 @@ function saveEv() {
     S.events.push({id: Date.now(), ...payload});
     toast('行程已同步加入 ✨');
   }
-  save(); closeEvModal(); initToday(); renderCalendar();
+  save();
+  closeEvModal();
+  initToday();
+  renderCalendar();
 }
 
 function deleteEditingEv() {
@@ -924,7 +870,10 @@ function deleteEditingEv() {
   const ev = S.events.find(e => e.id === S.editEvId);
   if (ev && confirm(`確定要刪除「${ev.title}」嗎？`)) {
     S.events = S.events.filter(e => e.id !== S.editEvId);
-    save(); closeEvModal(); initToday(); renderCalendar();
+    save();
+    closeEvModal();
+    initToday();
+    renderCalendar();
     toast('已刪除行程');
   }
 }
@@ -995,61 +944,320 @@ function goToToday() {
   renderCalendar();
 }
 
-// ═══ REAL INTERACTIVE MAP (Leaflet + Illustrated Buildings + Place Notes) ═══
-function initLeafletMap() {
-  renderMapFilters();
-  if (!leafletMap && typeof L !== 'undefined') {
-    leafletMap = L.map('leaflet-map', { zoomControl: false }).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 15);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(leafletMap);
-
-    leafletMap.on('click', e => {
-      if (!S.addingPinMode) return;
-      S.pendingCoords = { lat: Number(e.latlng.lat.toFixed(6)), lng: Number(e.latlng.lng.toFixed(6)) };
-      document.getElementById('new-place-name').value = '';
-      document.getElementById('new-place-note').value = '';
-      document.getElementById('new-place-coords').value = `${S.pendingCoords.lat}, ${S.pendingCoords.lng}`;
-      document.getElementById('place-modal').classList.add('open');
-      toggleAddPinMode(false);
-    });
-  }
-  renderMapMarkers();
-  renderPlaceList();
-}
-
-function renderMapFilters() {
+// ═══ MAP (Illustrated Buildings + GPS) ═══
+function renderMap() {
   const fc = document.getElementById('map-filters');
   const cats = ['全部','咖啡','服飾','餐廳','公園','醫院','超市'];
   const icons = {'咖啡':'☕','服飾':'👗','餐廳':'🍜','公園':'🌳','醫院':'🏥','超市':'🛍️'};
   fc.innerHTML = cats.map(c => `<button class="map-filter${!S.favOnly && S.mapCat === c ? ' on' : ''}" onclick="filterByCat('${c}')">${c === '全部' ? '全部地點' : icons[c] + ' ' + c}</button>`).join('');
+
+  const pc = document.getElementById('map-pins');
+  pc.innerHTML = '';
+  const visiblePlaces = getFilteredPlaces();
+
+  visiblePlaces.forEach(p => {
+    const isFav = S.favorites.includes(p.id);
+    const isAct = S.selectedPlaceId === p.id;
+    const pin = document.createElement('div');
+    pin.className = 'bldg-marker' + (isAct ? ' active' : '');
+    pin.id = 'pin-' + p.id;
+    pin.style.cssText = `left:${p.x};top:${p.y}`;
+    pin.innerHTML = `<div class="bldg-card" style="background:${p.bg}">${BLDG_SVGS[p.type]}${isFav ? '<div class="bldg-fav">♥</div>' : ''}</div><span class="bldg-label">${esc(p.name)}</span>`;
+    pin.onclick = () => selectPlace(p.id);
+    pc.appendChild(pin);
+  });
+  renderPlaceList();
 }
 
 function getFilteredPlaces() {
   const q = (document.getElementById('map-search-input')?.value || '').trim().toLowerCase();
-  const origin = S.userLoc || DEFAULT_CENTER;
-
-  return getAllPlaces()
-    .map(p => {
-      const distMeters = calcDistanceMeters(origin.lat, origin.lng, p.lat, p.lng);
-      const userNote = S.placeNotes[p.id] || '';
-      return { ...p, distMeters, distText: formatDist(distMeters), userNote };
-    })
-    .filter(p => {
-      if (S.favOnly && !S.favorites.includes(p.id)) return false;
-      if (!S.favOnly && S.mapCat !== '全部' && p.cat !== S.mapCat) return false;
-      if (q) {
-        const hay = `${p.name} ${p.cat} ${p.desc} ${p.userNote}`.toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    })
-    .sort((a, b) => a.distMeters - b.distMeters);
+  return PLACES.filter(p => {
+    if (S.favOnly && !S.favorites.includes(p.id)) return false;
+    if (!S.favOnly && S.mapCat !== '全部' && p.cat !== S.mapCat) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !p.cat.includes(q) && !p.desc.toLowerCase().includes(q)) return false;
+    return true;
+  });
 }
 
-function renderMapMarkers() {
-  if (!leafletMap) return;
-  Object.values(leafletMarkers).forEach(m => leafletMap.removeLayer(m));
-  leafletMarkers = {};
+function renderPlaceList() {
+  const el = document.getElementById('place-list');
+  const list = getFilteredPlaces();
+  document.getElementById('place-count-label').textContent = `共 ${list.length} 個地點`;
+  if (!list.length) {
+    el.innerHTML = '<div class="empty" style="padding:20px 0">找不到符合條件的地點</div>';
+    return;
+  }
+  el.innerHTML = list.map(p => {
+    const isFav = S.favorites.includes(p.id);
+    const chosen = S.selectedPlaceId === p.id ? ' chosen' : '';
+    return `<div class="place-item${chosen}" onclick="selectPlace(${p.id})"><div class="place-icon" style="background:${p.bg}">${BLDG_SVGS[p.type]}</div><div class="place-info"><strong>${esc(p.name)}</strong><small>${p.cat}　·　${p.dist}</small></div><button class="heart-btn${isFav ? ' saved' : ''}" onclick="event.stopPropagation();toggleFav(${p.id})" title="收藏地點">${isFav ? '♥' : '♡'}</button></div>`;
+  }).join('');
+}
+
+function selectPlace(id) {
+  const p = PLACES.find(x => x.id === id);
+  if (!p) return;
+  S.selectedPlaceId = id;
+  renderMap();
+  document.getElementById('detail-name').innerHTML = `<span>${esc(p.name)}</span><span style="font-size:11px;color:var(--sage)">${p.dist}</span>`;
+  document.getElementById('detail-desc').innerHTML = `${esc(p.desc)}<br><span style="color:#9aa59f">營業時間：${p.hours}</span>`;
+}
+
+function toggleFav(id) {
+  const idx = S.favorites.indexOf(id);
+  if (idx > -1) { S.favorites.splice(idx, 1); toast('已取消收藏'); }
+  else { S.favorites.push(id); toast('已加入喜好地點 ♡'); }
+  save();
+  renderMap();
+}
+
+function filterByCat(cat) {
+  S.favOnly = false;
+  S.mapCat = cat;
+  document.getElementById('fav-filter-btn').classList.remove('active');
+  renderMap();
+}
+
+function filterPlaces() {
+  renderMap();
+}
+
+function toggleFavOnly() {
+  S.favOnly = !S.favOnly;
+  const btn = document.getElementById('fav-filter-btn');
+  btn.classList.toggle('active', S.favOnly);
+  if (S.favOnly && !S.favorites.length) {
+    toast('你還沒有收藏任何地點，點愛心即可收藏 ♡');
+  }
+  renderMap();
+}
+
+function zoomMap(delta) {
+  S.mapZoom = Math.min(Math.max(S.mapZoom + delta, 0.85), 1.45);
+  document.getElementById('map-canvas').style.transform = `scale(${S.mapZoom})`;
+}
+
+function navigateSelectedPlace() {
+  const p = PLACES.find(x => x.id === S.selectedPlaceId);
+  if (!p) { toast('請先選擇一個目標地點'); return; }
+  toast(`🧭 已規劃前往「${p.name}」的步行路線（約 ${p.dist}）`);
+}
+
+function locateMe() {
+  const btn = document.getElementById('loc-ctrl');
+  const status = document.getElementById('loc-status');
+  const gps = document.getElementById('user-gps');
+  btn.classList.add('locating');
+  status.style.display = 'block';
+  status.textContent = '📡 正在取得 GPS 定位...';
+  status.style.color = 'var(--sage)';
+
+  const finishLocate = (msg) => {
+    btn.classList.remove('locating');
+    gps.classList.add('show');
+    status.textContent = '✅ 已顯示目前位置';
+    status.style.color = '#16a34a';
+    setTimeout(() => status.style.display = 'none', 3200);
+    toast(msg);
+  };
+
+  if (!navigator.geolocation) {
+    finishLocate('📍 已定位至目前街區中心');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    pos => finishLocate(`📍 定位成功！精確度 ±${Math.round(pos.coords.accuracy)}m`),
+    () => finishLocate('📍 已顯示模擬目前位置（未開啟瀏覽器定位權限）'),
+    {enableHighAccuracy: true, timeout: 6000}
+  );
+}
+
+// ═══ TASKS & SHOPPING ═══
+function renderFullTasks() {
+  const el = document.getElementById('full-task-list');
+  document.getElementById('task-card-count').textContent = S.tasks.length + ' 項';
+  if (!S.tasks.length) {
+    el.innerHTML = '<div class="empty" style="padding:16px 0">還沒有待辦事項</div>';
+    return;
+  }
+  el.innerHTML = S.tasks.map((t, i) => `<div class="task-row${t.done ? ' done' : ''}" id="task-${i}"><button class="todo-check" onclick="toggleTask(${i})">${t.done ? '✓' : ''}</button><div class="task-main"><span class="task-title">${esc(t.title)}</span><span class="task-sub">${esc(t.tag || '待辦')}</span></div><div class="task-btns"><button class="task-btn" onclick="startEditFullTask(${i})">編輯</button><button class="task-btn del" onclick="deleteTask(${i})">刪除</button></div></div>`).join('');
+}
+function startEditFullTask(i) {
+  const row = document.getElementById('task-' + i);
+  row.querySelector('.task-main').innerHTML = `<input class="task-edit-input" id="tei-${i}" value="${esc(S.tasks[i].title)}" onkeydown="if(event.key==='Enter')saveFullTask(${i});if(event.key==='Escape')renderFullTasks()"><input class="task-edit-input" style="font-size:10px;color:#9aa59f;margin-top:4px" id="tei-tag-${i}" value="${esc(S.tasks[i].tag || '')}" placeholder="標籤（可選）" onkeydown="if(event.key==='Enter')saveFullTask(${i})">`;
+  row.querySelector('.task-btns').innerHTML = `<button class="task-btn" onclick="saveFullTask(${i})">✅ 儲存</button><button class="task-btn" onclick="renderFullTasks()">取消</button>`;
+  document.getElementById('tei-' + i).focus();
+}
+function saveFullTask(i) {
+  const v = document.getElementById('tei-' + i).value.trim();
+  if (!v) { toast('標題不能為空'); return; }
+  S.tasks[i].title = v;
+  const tag = document.getElementById('tei-tag-' + i);
+  if (tag) S.tasks[i].tag = tag.value.trim();
+  save(); renderFullTasks(); renderSidebarTasks(); updateStats(); toast('✅ 已更新');
+}
+function toggleTask(i) {
+  S.tasks[i].done = !S.tasks[i].done;
+  save(); renderFullTasks(); renderSidebarTasks(); updateStats();
+  toast(S.tasks[i].done ? '做得好！' : '已還原');
+}
+function deleteTask(i) {
+  if (confirm(`刪除「${S.tasks[i].title}」？`)) {
+    S.tasks.splice(i, 1);
+    save(); renderFullTasks(); renderSidebarTasks(); updateStats(); toast('已刪除');
+  }
+}
+function addFullTask() {
+  const input = document.getElementById('task-full-input');
+  const v = input.value.trim();
+  if (!v) return;
+  S.tasks.unshift({id: Date.now(), title: v, done: false, tag: ''});
+  input.value = '';
+  save(); renderFullTasks(); renderSidebarTasks(); updateStats(); toast('已新增！');
+}
+
+function renderFullShop() {
+  const el = document.getElementById('full-shop-list');
+  document.getElementById('shop-card-count').textContent = S.shopping.length + ' 項';
+  if (!S.shopping.length) {
+    el.innerHTML = '<div class="empty" style="padding:16px 0">購物清單是空的</div>';
+    return;
+  }
+  el.innerHTML = S.shopping.map((s, i) => `<div class="task-row${s.done ? ' done' : ''}" id="shop-${i}"><button class="todo-check" onclick="toggleShop(${i})">${s.done ? '✓' : ''}</button><div class="task-main"><span class="task-title">${esc(s.title)}</span></div><div class="task-btns"><button class="task-btn" onclick="startEditShop(${i})">編輯</button><button class="task-btn del" onclick="deleteShop(${i})">刪除</button></div></div>`).join('');
+}
+function startEditShop(i) {
+  const row = document.getElementById('shop-' + i);
+  row.querySelector('.task-main').innerHTML = `<input class="task-edit-input" id="sei-${i}" value="${esc(S.shopping[i].title)}" onkeydown="if(event.key==='Enter')saveEditShop(${i});if(event.key==='Escape')renderFullShop()">`;
+  row.querySelector('.task-btns').innerHTML = `<button class="task-btn" onclick="saveEditShop(${i})">✅</button><button class="task-btn" onclick="renderFullShop()">✕</button>`;
+  document.getElementById('sei-' + i).focus();
+}
+function saveEditShop(i) {
+  const v = document.getElementById('sei-' + i).value.trim();
+  if (!v) return;
+  S.shopping[i].title = v;
+  save(); renderFullShop(); toast('✅ 已更新');
+}
+function toggleShop(i) { S.shopping[i].done = !S.shopping[i].done; save(); renderFullShop(); }
+function deleteShop(i) { if (confirm('確定刪除這項物品？')) { S.shopping.splice(i, 1); save(); renderFullShop(); toast('已刪除'); } }
+function addFullShop() {
+  const input = document.getElementById('shop-full-input');
+  const v = input.value.trim();
+  if (!v) return;
+  S.shopping.unshift({id: Date.now(), title: v, done: false});
+  input.value = '';
+  save(); renderFullShop(); toast('已新增！');
+}
+
+// ═══ Global Search (⌘K) ═══
+function openCmdModal() {
+  document.getElementById('cmd-modal').classList.add('open');
+  const inp = document.getElementById('cmd-input');
+  inp.value = '';
+  renderCmdResults('');
+  setTimeout(() => inp.focus(), 60);
+}
+function closeCmdModal() { document.getElementById('cmd-modal').classList.remove('open'); }
+function renderCmdResults(q) {
+  q = q.trim().toLowerCase();
+  const res = [];
+  S.events.forEach(e => {
+    if (!q || e.title.toLowerCase().includes(q) || (e.note || '').toLowerCase().includes(q)) {
+      res.push({type: '行程', title: e.title, sub: `${e.dateISO} ${e.start || ''}`, act: () => { closeCmdModal(); openEditEv(e.id); }});
+    }
+  });
+  S.tasks.forEach(t => {
+    if (!q || t.title.toLowerCase().includes(q)) {
+      res.push({type: '待辦', title: t.title, sub: t.done ? '已完成' : '進行中', act: () => { closeCmdModal(); showView('tasks'); }});
+    }
+  });
+  S.shopping.forEach(s => {
+    if (!q || s.title.toLowerCase().includes(q)) {
+      res.push({type: '購物', title: s.title, sub: s.done ? '已購買' : '待購買', act: () => { closeCmdModal(); showView('tasks'); }});
+    }
+  });
+  PLACES.forEach(p => {
+    if (!q || p.name.toLowerCase().includes(q) || p.cat.includes(q)) {
+      res.push({type: '地點', title: p.name, sub: `${p.cat} · ${p.dist}`, act: () => { closeCmdModal(); showView('map'); selectPlace(p.id); }});
+    }
+  });
+
+  const box = document.getElementById('cmd-results');
+  if (!res.length) {
+    box.innerHTML = '<div class="empty" style="padding:24px 0">找不到相符的內容</div>';
+    return;
+  }
+  box.innerHTML = res.slice(0, 12).map((r, idx) => `<div class="cmd-item" data-idx="${idx}"><span class="cmd-badge">${r.type}</span><span class="cmd-title">${esc(r.title)}</span><span class="cmd-sub">${esc(r.sub)}</span></div>`).join('');
+  box.querySelectorAll('.cmd-item').forEach(el => {
+    el.onclick = () => res[+el.dataset.idx].act();
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    openCmdModal();
+  }
+  if (e.key === 'Escape') {
+    closeEvModal();
+    closeCmdModal();
+  }
+});
+
+// ═══ Modal Overlay Close ═══
+document.querySelectorAll('.modal-backdrop').forEach(o => o.addEventListener('click', e => {
+  if (e.target === o) o.classList.remove('open');
+}));
+
+// ═══ Sample Data ═══
+function initSample(force = false) {
+  const iso = toLocalISO();
+  const y = new Date().getFullYear(), m = String(new Date().getMonth() + 1).padStart(2, '0');
+  if (force || !S.events.length) {
+    S.events = [
+      {id:1,title:'起床 & 慢慢準備',start:'07:30',end:'08:30',dateISO:iso,titleColor:'#263633',bgColor:'#eaf6ef',note:'☀️ 晨間例行'},
+      {id:2,title:'專案靈感會議',start:'09:00',end:'10:00',dateISO:iso,titleColor:'#263633',bgColor:'#f0f4fb',note:'📍 線上會議 · 工作'},
+      {id:3,title:'和朋友吃午餐',start:'12:30',end:'13:30',dateISO:iso,titleColor:'#263633',bgColor:'#fff8e8',note:'📍 小日子咖啡'},
+      {id:4,title:'去超市補充生活用品',start:'14:00',end:'15:00',dateISO:iso,titleColor:'#263633',bgColor:'#fff4f1',note:'🛒 記得買燕麥奶'},
+      {id:5,title:'準備休息',start:'21:30',end:'22:30',dateISO:iso,titleColor:'#263633',bgColor:'#f3edfa',note:'🌙 晚安'},
+      {id:6,title:'團隊同步會議',start:'10:00',end:'11:00',dateISO:`${y}-${m}-06`,titleColor:'#ffffff',bgColor:'#91a6cf',note:'週會同步'},
+      {id:7,title:'和 Mina 吃飯',start:'18:30',end:'20:00',dateISO:`${y}-${m}-14`,titleColor:'#ffffff',bgColor:'#e6a18e',note:'好好食堂'}
+    ];
+  }
+  if (force || !S.tasks.length) {
+    S.tasks = [
+      {id:1,title:'回覆設計師的訊息',done:false,tag:'工作'},
+      {id:2,title:'整理陽台的植物',done:false,tag:'生活'},
+      {id:3,title:'帶環保袋出門',done:true,tag:'生活'},
+      {id:4,title:'找時間預約牙醫',done:false,tag:'健康'}
+    ];
+  }
+  if (force || !S.shopping.length) {
+    S.shopping = [
+      {id:1,title:'燕麥奶 × 2',done:false},
+      {id:2,title:'雞蛋',done:false},
+      {id:3,title:'小噴壺（植物用）',done:false}
+    ];
+  }
+  if (force || !S.favorites.length) {
+    S.favorites = [1, 3];
+  }
+  save();
+}
+
+function resetDemoData() {
+  if (confirm('要將所有行程、待辦與收藏地點還原成預設範例資料嗎？')) {
+    initSample(true);
+    initToday();
+    renderCalendar();
+    renderMap();
+    toast('已還原預設範例資料 🌱');
+  }
+}
+
+// ═══ INIT ═══
+initSample();
+initToday();
+renderCalendar();
+</script>
+</body>
+</html>
