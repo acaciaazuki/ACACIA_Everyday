@@ -163,9 +163,9 @@ button{cursor:pointer;color:inherit;background:none}
 
 /* Custom Leaflet Illustrated Marker */
 .bb-leaflet-icon{background:none !important;border:none !important}
-.bldg-pin-wrap{display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-82%);cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.bldg-pin-wrap:hover{transform:translate(-50%,-86%) scale(1.08);z-index:999}
-.bldg-pin-wrap.active{transform:translate(-50%,-90%) scale(1.14);z-index:1000}
+.bldg-pin-wrap{width:80px;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1);transform-origin:50% 88%}
+.bldg-pin-wrap:hover{transform:scale(1.08);z-index:999}
+.bldg-pin-wrap.active{transform:scale(1.14);z-index:1000}
 .bldg-card{position:relative;width:50px;height:50px;border-radius:15px;background:#fff;box-shadow:0 6px 16px #253d312e;border:2.5px solid #fff;display:grid;place-items:center}
 .bldg-pin-wrap.active .bldg-card{border-color:var(--sage);box-shadow:0 8px 22px #4a987b55;background:#f7fcf9}
 .bldg-card svg{width:34px;height:34px}
@@ -1067,7 +1067,7 @@ function renderMapMarkers() {
     const isAct = S.selectedPlaceId === p.id;
     const hasNote = Boolean(p.userNote && p.userNote.trim());
     const html = `<div class="bldg-pin-wrap${isAct ? ' active' : ''}"><div class="bldg-card" style="background:${p.bg}">${BLDG_SVGS[p.type] || BLDG_SVGS.coffee}${isFav ? '<div class="bldg-fav">♥</div>' : ''}${hasNote ? '<div class="bldg-note-dot" title="有私人備註">✎</div>' : ''}</div><span class="bldg-label">${esc(p.name)}</span></div>`;
-    const icon = L.divIcon({ className: 'bb-leaflet-icon', html, iconSize: [0, 0], iconAnchor: [0, 0] });
+    const icon = L.divIcon({ className: 'bb-leaflet-icon', html, iconSize: [80, 90], iconAnchor: [40, 82] });
     const marker = L.marker([p.lat, p.lng], { icon }).addTo(leafletMap);
     marker.on('click', () => selectPlace(p.id));
     leafletMarkers[p.id] = marker;
@@ -1264,7 +1264,8 @@ function locateMe() {
         const gpsIcon = L.divIcon({
           className: 'bb-leaflet-icon',
           html: '<div class="gps-marker-wrap"><div class="gps-pulse"></div><div class="gps-dot"></div></div>',
-          iconSize: [0, 0]
+          iconSize: [40, 40],
+          iconAnchor: [20, 20]
         });
         userGpsMarker = L.marker([lat, lng], { icon: gpsIcon, zIndexOffset: 1000 }).addTo(leafletMap);
         userAccuracyCircle = L.circle([lat, lng], {
