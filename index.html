@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7faf8">
 <title>BrainBox+ — 把每一天，過得剛剛好</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous"/>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap');
 :root{--ink:#263633;--muted:#8a9893;--sage:#4a987b;--sage-light:#eaf6ef;--sage-dark:#3d876c;--mint:#dff2e9;--line:#edf1ee;--paper:#fff;--bg:#f7faf8;--shadow:0 12px 36px #29483a0b;--shadow-sm:0 2px 8px #29483a08;--nav-w:240px;--radius:14px;--radius-sm:10px;--tr:.2s ease}
@@ -998,11 +998,18 @@ function goToToday() {
 // ═══ REAL INTERACTIVE MAP (Leaflet + Illustrated Buildings + Place Notes) ═══
 function initLeafletMap() {
   renderMapFilters();
-  if (!leafletMap && typeof L !== 'undefined') {
+  if (!leafletMap && typeof L === 'undefined') {
+    const status = document.getElementById('loc-status');
+    status.style.display = 'block';
+    status.textContent = '⚠️ 地圖元件載入失敗，請重新整理頁面';
+    status.style.color = '#ef4444';
+    document.getElementById('map-hint').textContent = '地圖服務暫時無法載入';
+    return;
+  }
+  if (!leafletMap) {
     leafletMap = L.map('leaflet-map', { zoomControl: false }).setView([DEFAULT_CENTER.lat, DEFAULT_CENTER.lng], 15);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19
     }).addTo(leafletMap);
 
