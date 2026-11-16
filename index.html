@@ -639,6 +639,7 @@ const S = {
   favOnly: false,
   selectedPlaceId: null,
   userLoc: null,
+  nearbyPlaces: [],
   addingPinMode: false,
   pendingCoords: null
 };
@@ -652,7 +653,7 @@ let userGpsMarker = null;
 let userAccuracyCircle = null;
 
 function getAllPlaces() {
-  return [...DEFAULT_PLACES, ...S.customPlaces];
+  return [...DEFAULT_PLACES, ...S.customPlaces, ...S.nearbyPlaces];
 }
 
 // ═══ Distance Calculator (Haversine) ═══
@@ -1236,6 +1237,76 @@ function navigateSelectedPlace() {
   window.open(url, '_blank');
 }
 
+function getNearbyPlaceType(tags) {
+  if (tags.shop === 'convenience' || tags.shop === 'supermarket' || tags.shop === 'grocery') {
+    return { cat: '超市', type: 'market', bg: '#f1f8f4' };
+  }
+  if (tags.amenity === 'cafe' || tags.shop === 'coffee') {
+    return { cat: '咖啡', type: 'coffee', bg: '#f6e7d8' };
+  }
+  return { cat: '餐廳', type: 'restaurant', bg: '#fff8e7' };
+}
+
+async function fetchNearbyPlaces(lat, lng) {
+  const status = document.getElementById('loc-status');
+  const query = `[out:json][timeout:20];(nwr(around:5000,${lat},${lng})["name"]["shop"~"convenience|supermarket|grocery|coffee"];nwr(around:5000,${lat},${lng})["name"]["amenity"~"restaurant|cafe|fast_food|bar"];);out center tags;`;
+  const endpoints = [
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter'
+  ];
+  let data = null;
+
+  for (const endpoint of endpoints) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
+      const response = await fetch(`${endpoint}?data=${encodeURIComponent(query)}`, { signal: controller.signal });
+      clearTimeout(timeout);
+      if (!response.ok) continue;
+      data = await response.json();
+      break;
+    } catch (error) {
+      if (error.name !== 'AbortError') continue;
+    }
+  }
+
+  if (!data) {
+    status.textContent = '⚠️ 附近店家載入失敗，可稍後重試定位';
+    status.style.color = '#ef4444';
+    toast('無法取得附近店家資料，請確認網路連線');
+    return;
+  }
+
+  const seen = new Set();
+  S.nearbyPlaces = data.elements.map(element => {
+    const tags = element.tags || {};
+    const point = element.center || element;
+    const name = tags.name && tags.name.trim();
+    if (!name || !point.lat || !point.lon || seen.has(name)) return null;
+    seen.add(name);
+    const style = getNearbyPlaceType(tags);
+    const cuisine = tags.cuisine ? `主打：${tags.cuisine.replace(/;/g, '、')}` : `附近的${style.cat}`;
+    return {
+      id: `osm:${element.type}/${element.id}`,
+      name,
+      cat: style.cat,
+      type: style.type,
+      bg: style.bg,
+      lat: Number(point.lat),
+      lng: Number(point.lon),
+      desc: cuisine,
+      hours: tags.opening_hours || '營業時間未提供',
+      isNearby: true
+    };
+  }).filter(Boolean).slice(0, 100);
+
+  renderMapMarkers();
+  renderPlaceList();
+  status.textContent = `✅ 已載入附近 ${S.nearbyPlaces.length} 個地點`;
+  status.style.color = '#16a34a';
+  setTimeout(() => status.style.display = 'none', 3500);
+}
+
 function locateMe() {
   const btn = document.getElementById('loc-ctrl');
   const status = document.getElementById('loc-status');
@@ -1282,6 +1353,7 @@ function locateMe() {
       renderPlaceList();
       status.textContent = `✅ 已定位 (±${Math.round(accuracy)}m)`;
       status.style.color = '#16a34a';
+      fetchNearbyPlaces(lat, lng);
       setTimeout(() => status.style.display = 'none', 3500);
       toast(`📍 已定位至你的真實座標，並重新計算店家距離`);
     },
