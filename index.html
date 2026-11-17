@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7faf8">
-<title>ACACIA — 把每一天，過得剛剛好</title>
+<title>ACACIA 剛剛好</title>
 <!-- Leaflet fallback interactive map CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -721,6 +721,7 @@ button{cursor:pointer;color:inherit;background:none}
           <option value="服飾">👗 服飾選物</option>
           <option value="公園">🌳 公園綠地</option>
           <option value="醫院">🏥 醫院診所藥局</option>
+          <option value="飲料甜點">🧋 飲料甜點手搖飲</option>
         </select>
       </div>
       <div class="field">
@@ -784,7 +785,8 @@ const CAT_TO_TYPE = {
   '服飾':     {type:'clothing', bg:'#fff0f3'},
   '餐廳':     {type:'restaurant', bg:'#fff8e7'},
   '公園':     {type:'park', bg:'#edf5eb'},
-  '醫院':     {type:'hospital', bg:'#ebf4ff'}
+  '醫院':     {type:'hospital', bg:'#ebf4ff'},
+  '飲料甜點': {type:'coffee', bg:'#fdf4ff'}
 };
 
 const DEFAULT_PLACES = [
@@ -1356,8 +1358,8 @@ function buildGmapSvgIcon(p, isFav, isAct) {
 
 function renderMapUI() {
   const fc = document.getElementById('map-filters');
-  const cats = ['全部','旅遊計畫','喜愛的地點','想要去吃的餐廳','超商超市','咖啡','服飾','公園','醫院'];
-  const icons = {'旅遊計畫':'🧳','喜愛的地點':'❤️','想要去吃的餐廳':'🍴','超商超市':'🏪','咖啡':'☕','餐廳':'🍜','服飾':'👗','公園':'🌳','醫院':'🏥'};
+  const cats = ['全部','旅遊計畫','喜愛的地點','想要去吃的餐廳','飲料甜點','超商超市','咖啡','服飾','公園','醫院'];
+  const icons = {'旅遊計畫':'🧳','喜愛的地點':'❤️','想要去吃的餐廳':'🍴','飲料甜點':'🧋','超商超市':'🏪','咖啡':'☕','餐廳':'🍜','服飾':'👗','公園':'🌳','醫院':'🏥'};
   fc.innerHTML = cats.map(c => `<button class="map-filter${!S.favOnly && S.mapCat === c ? ' on' : ''}" onclick="filterByCat('${c}')">${c === '全部' ? '全部地點' : icons[c] + ' ' + c}</button>`).join('');
 
   S.places.forEach(p => {
@@ -1629,7 +1631,9 @@ function classifyAndFormatOsmElement(tags) {
   ) {
     cat = '超商超市';
     if (!rawName) rawName = '便利商店 / 超市';
-  } else if (tags.amenity === 'cafe' || tags.shop === 'coffee' || tags.shop === 'bakery' || tags.shop === 'pastry' || tags.shop === 'tea' || tags.amenity === 'ice_cream' || lower.includes('咖啡') || lower.includes('星巴克') || lower.includes('路易莎') || lower.includes('cama')) {
+  } else if (lower.includes('飲料') || lower.includes('甜點') || lower.includes('茶') || lower.includes('冰') || lower.includes('50嵐') || lower.includes('可不可') || lower.includes('清心') || lower.includes('麻古') || lower.includes('茶湯會') || lower.includes('迷客夏') || tags.shop === 'beverages' || tags.shop === 'bubble_tea' || tags.shop === 'pastry' || tags.shop === 'dessert') {
+    cat = '飲料甜點';
+  } else if (tags.amenity === 'cafe' || tags.shop === 'coffee' || tags.shop === 'bakery' || tags.amenity === 'ice_cream' || lower.includes('咖啡') || lower.includes('星巴克') || lower.includes('路易莎') || lower.includes('cama')) {
     cat = '咖啡';
   } else if (tags.shop === 'clothes' || tags.shop === 'shoes' || tags.shop === 'boutique' || tags.shop === 'fashion' || tags.shop === 'bag') {
     cat = '服飾';
@@ -1712,9 +1716,9 @@ async function searchNearbyRealPlaces(showToastMsg = true, customCenter = null) 
   const overpassQuery = `
     [out:json][timeout:15];
     (
-      nwr["shop"~"convenience|supermarket|department_store|bakery|coffee|tea|clothes|shoes|chemist|books|mall|pastry|greengrocer"](around:900,${center.lat},${center.lng});
+      nwr["shop"~"convenience|supermarket|department_store|bakery|coffee|tea|beverages|bubble_tea|dessert|clothes|shoes|chemist|books|mall|pastry|greengrocer"](around:900,${center.lat},${center.lng});
       nwr["amenity"~"cafe|restaurant|fast_food|food_court|ice_cream|bar|hospital|clinic|doctors|dentist|pharmacy"](around:900,${center.lat},${center.lng});
-      nwr["name"~"7-ELEVEN|7-Eleven|7-11|統一超商|全家|FamilyMart|美廉社|Simple Mart|全聯|萊爾富|OK超商|康是美|屈臣氏|寶雅|蝦皮|星巴克|路易莎"](around:900,${center.lat},${center.lng});
+      nwr["name"~"7-ELEVEN|7-11|全家|美廉社|全聯|萊爾富|OK超商|康是美|屈臣氏|寶雅|蝦皮|星巴克|路易莎|50嵐|可不可|清心|麻古|茶湯會|迷客夏|飲料|甜點"](around:900,${center.lat},${center.lng});
       nwr["leisure"="park"](around:900,${center.lat},${center.lng});
     );
     out center 140;
@@ -1907,10 +1911,22 @@ async function searchAddressOnMap(q) {
       });
       return;
     }
-    
-    // OSM Nominatim
-    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ' 台灣')}`);
-    const data = await res.json();
+
+    // OSM Nominatim - fallback to street if house number fails
+    const fetchGeo = async (query) => {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+        return await res.json();
+    };
+
+    let data = await fetchGeo(q + ' 台灣');
+    if (!data || data.length === 0) {
+        // Remove specific numbers and try again for Taiwan addresses (e.g. 301號 -> 移除)
+        const fallbackQuery = q.replace(/\d+(巷|弄|號|樓)/g, '').trim();
+        if (fallbackQuery !== q) {
+            data = await fetchGeo(fallbackQuery + ' 台灣');
+        }
+    }
+
     if (data && data.length > 0) {
       const lat = parseFloat(data[0].lat);
       const lng = parseFloat(data[0].lon);
@@ -1918,7 +1934,7 @@ async function searchAddressOnMap(q) {
       S.userPos = { lat, lng };
       searchNearbyRealPlaces(true);
     } else {
-      toast('⚠️ 找不到該地點，請嘗試輸入更完整的地址');
+      toast('⚠️ 找不到該地點，請嘗試輸入附近的大地標或路段');
     }
   } catch (e) {
     toast('⚠️ 搜尋發生錯誤');
