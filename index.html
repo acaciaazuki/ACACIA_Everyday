@@ -224,7 +224,7 @@ button{cursor:pointer;color:inherit;background:none}
 .batch-date.selected { background-color: var(--sage); color: white; font-weight: bold; }
 .modal-backdrop{position:fixed;inset:0;background:#1d302858;display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-backdrop.open{display:flex}
-.modal{width:min(480px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 20px 60px #17362933;max-height:90vh;overflow-y:auto}
+.modal{width:min(480px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 20px 60px #17362933;max-height:90vh;overflow:visible}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .modal-head h2{font-size:17px;font-weight:700;margin:0}
 .close-btn{background:#f4f7f4;border-radius:8px;width:30px;height:30px;font-size:15px;color:#78867f;display:grid;place-items:center;transition:var(--tr)}
@@ -597,7 +597,7 @@ button{cursor:pointer;color:inherit;background:none}
     <div class="field" id="np-search-wrap">
       <label>🔍 搜尋地點 (需啟用 Google API 以自動帶入資訊)</label>
       <!-- 更新：使用新版 API 的專用容器取代原本的 input -->
-      <div id="place-autocomplete-container" style="background:#fff; border-radius:var(--radius-sm); overflow:hidden;"></div>
+      <div id="place-autocomplete-container" style="background:#fff; border-radius:var(--radius-sm);"></div>
     </div>
     <div class="field"><label>地點名稱 *</label><input id="np-name" placeholder="例如：春水堂 創始店"></div>
     <div class="field"><label>詳細地址</label><input id="np-address" placeholder="地點的完整地址"></div>
