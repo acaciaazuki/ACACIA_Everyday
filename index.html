@@ -54,7 +54,6 @@ button{cursor:pointer;color:inherit;background:none}
 .search-box kbd{font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#b5bdb8;font-family:inherit}
 .top-icon{height:36px;width:36px;border-radius:var(--radius-sm);background:white;border:1px solid var(--line);font-size:15px;display:grid;place-items:center;transition:var(--tr);position:relative}
 .top-icon:hover{background:var(--sage-light);border-color:var(--sage)}
-.notif-dot{position:absolute;right:7px;top:6px;width:6px;height:6px;background:#e89b7e;border-radius:50%}
 
 /* ═══ Page Header ═══ */
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin:16px 0 22px;gap:12px;flex-wrap:wrap}
@@ -151,29 +150,29 @@ button{cursor:pointer;color:inherit;background:none}
 .cal-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11px;color:#839088}
 
 /* ═══ MAP (Real Google Maps / Interactive Map + Illustrated Buildings) ═══ */
-.map-layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
-.mapbox{height:580px;position:relative;overflow:hidden;border-radius:16px;border:1px solid #dce6de;background:#edf2ee;user-select:none}
+.map-layout{display:grid;grid-template-columns:1fr 350px;gap:16px}
+.mapbox{height:600px;position:relative;overflow:hidden;border-radius:16px;border:1px solid #dce6de;background:#edf2ee;user-select:none}
 #real-map-container{position:absolute;inset:0;width:100%;height:100%;z-index:1}
 .leaflet-control-attribution{font-size:9px!important;opacity:.6}
 
-.map-searchbar{position:absolute;z-index:5;left:16px;top:16px;width:min(340px,calc(100% - 76px));height:42px;border-radius:12px;background:white;box-shadow:0 4px 16px #3458421f;display:flex;align-items:center;padding:0 12px;gap:8px}
+.map-searchbar{position:absolute;z-index:5;left:16px;top:16px;width:min(360px,calc(100% - 76px));height:42px;border-radius:12px;background:white;box-shadow:0 4px 16px #3458421f;display:flex;align-items:center;padding:0 12px;gap:8px}
 .map-searchbar input{border:0;width:100%;font-size:12px}
 .map-searchbar button{font-size:11px;background:var(--sage-light);color:var(--sage-dark);padding:5px 9px;border-radius:8px;font-weight:700;white-space:nowrap;transition:var(--tr)}
 .map-searchbar button:hover{background:var(--sage);color:#fff}
 
-.map-filters{position:absolute;z-index:5;top:66px;left:16px;display:flex;gap:6px;flex-wrap:wrap;max-width:calc(100% - 76px)}
+.map-filters{position:absolute;z-index:5;top:66px;left:16px;display:flex;gap:5px;flex-wrap:wrap;max-width:calc(100% - 76px)}
 .map-filter{background:#fff;border-radius:20px;padding:6px 11px;font-size:10px;box-shadow:0 2px 8px #30493718;color:#69776f;font-weight:600;transition:var(--tr)}
 .map-filter:hover{background:var(--sage-light)}
 .map-filter.on{background:var(--sage);color:white}
 
 /* Illustrated Building Markers */
 .bldg-marker{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.bldg-marker:hover{transform:scale(1.1);z-index:999!important}
-.bldg-marker.active{transform:scale(1.15);z-index:1000!important}
-.bldg-card{position:relative;width:50px;height:50px;border-radius:15px;background:#fff;box-shadow:0 6px 16px #253d312e;border:2.5px solid #fff;display:grid;place-items:center;transition:var(--tr)}
+.bldg-marker:hover{transform:scale(1.12);z-index:999!important}
+.bldg-marker.active{transform:scale(1.18);z-index:1000!important}
+.bldg-card{position:relative;width:46px;height:46px;border-radius:14px;background:#fff;box-shadow:0 6px 16px #253d312e;border:2.5px solid #fff;display:grid;place-items:center;transition:var(--tr)}
 .bldg-marker.active .bldg-card{border-color:var(--sage);box-shadow:0 8px 22px #4a987b55;background:#f7fcf9}
-.bldg-card svg{width:34px;height:34px}
-.bldg-label{margin-top:3px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;color:#2f403b;box-shadow:0 2px 6px #253d3120;white-space:nowrap}
+.bldg-card svg{width:32px;height:32px}
+.bldg-label{margin-top:3px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;color:#2f403b;box-shadow:0 2px 6px #253d3120;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
 .bldg-marker.active .bldg-label{background:var(--sage);color:#fff}
 .bldg-fav{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:#ef4444;border:2px solid #fff;color:#fff;font-size:8px;display:grid;place-items:center;box-shadow:0 2px 4px #0002}
 
@@ -192,11 +191,11 @@ button{cursor:pointer;color:inherit;background:none}
 .map-loc-status{position:absolute;top:16px;right:58px;background:#fff;padding:7px 13px;border-radius:20px;font-size:11px;font-weight:600;box-shadow:var(--shadow-sm);z-index:5;display:none}
 
 /* Map sidebar & Editable Bookmark Details */
-.places-card{padding:16px;display:flex;flex-direction:column;max-height:580px;overflow:hidden}
+.places-card{padding:16px;display:flex;flex-direction:column;max-height:600px;overflow:hidden}
 .places-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .places-head h3{font-size:13px;font-weight:700;margin:0}
 .places-head small{font-size:10px;color:#9aa59f}
-.place-list{overflow-y:auto;display:grid;gap:6px;flex:1;padding-right:2px;min-height:150px}
+.place-list{overflow-y:auto;display:grid;gap:6px;flex:1;padding-right:2px;min-height:160px}
 .place-item{padding:9px 10px;border:1px solid #f0f3f1;border-radius:var(--radius-sm);display:flex;gap:10px;align-items:center;cursor:pointer;transition:var(--tr)}
 .place-item:hover,.place-item.chosen{background:#f5faf6;border-color:#b8dec6}
 .place-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
@@ -210,8 +209,8 @@ button{cursor:pointer;color:inherit;background:none}
 
 .place-detail{margin-top:10px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
 .detail-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.detail-top h4{font-size:14px;font-weight:700;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.star-picker{display:flex;gap:2px;font-size:14px;cursor:pointer}
+.detail-top h4{font-size:13px;font-weight:700;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.star-picker{display:flex;gap:2px;font-size:14px;cursor:pointer;flex-shrink:0}
 .star-picker span{color:#d5ddd8;transition:var(--tr)}
 .star-picker span.on{color:#f59e0b}
 .detail-meta-row{display:flex;gap:6px;align-items:center}
@@ -293,7 +292,7 @@ button{cursor:pointer;color:inherit;background:none}
 
 /* ═══ Responsive ═══ */
 @media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.map-layout{grid-template-columns:1fr}.places-card{max-height:none}.side-stack{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.mapbox{height:440px}.toast{bottom:76px}}
+@media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.mapbox{height:450px}.toast{bottom:76px}}
 </style>
 </head>
 <body>
@@ -434,14 +433,14 @@ button{cursor:pointer;color:inherit;background:none}
   <section class="view" id="map">
     <div class="page-head">
       <div>
-        <p class="eyebrow">真實定位與周邊生活探索</p>
+        <p class="eyebrow">方圓 900 公尺真實店家探索（含 7-Eleven、全家、美廉社、全聯、餐廳與診所）</p>
         <h1>探索地圖 🗺️</h1>
       </div>
       <div class="head-actions">
         <button class="pill-btn" onclick="openGmapKeyModal()" id="gmap-status-btn">🔑 Google Maps 金鑰</button>
-        <button class="pill-btn" onclick="searchNearbyRealPlaces()">📡 掃描附近真實店家</button>
+        <button class="pill-btn active" id="scan-btn" onclick="searchNearbyRealPlaces(true)">📡 掃描 900m 內真實店家</button>
         <button class="pill-btn" id="fav-filter-btn" onclick="toggleFavOnly()">♡ 喜好地點</button>
-        <button class="primary-btn" id="locate-btn" onclick="locateMe(true)">⌖ 精準定位我</button>
+        <button class="primary-btn" id="locate-btn" onclick="locateMe(true)">⌖ 定位並掃描周邊</button>
       </div>
     </div>
     <div class="map-layout">
@@ -450,22 +449,22 @@ button{cursor:pointer;color:inherit;background:none}
         <div id="real-map-container"></div>
 
         <div class="map-searchbar">
-          ⌕ <input id="map-search-input" placeholder="篩選地標，或輸入關鍵字搜尋…" oninput="filterPlaces(this.value)">
+          ⌕ <input id="map-search-input" placeholder="搜尋 7-11、美廉社、咖啡、餐廳或路名…" oninput="filterPlaces(this.value)">
           <button onclick="openAddPlaceModal()" title="在目前地圖中心新增地標">＋地標</button>
         </div>
         <div class="map-filters" id="map-filters"></div>
         <div class="map-controls">
           <button class="map-ctrl" onclick="zoomMap(1)" title="放大">＋</button>
           <button class="map-ctrl" onclick="zoomMap(-1)" title="縮小">−</button>
-          <button class="map-ctrl" id="loc-ctrl" onclick="locateMe(true)" title="高精準定位我">⌖</button>
+          <button class="map-ctrl" id="loc-ctrl" onclick="locateMe(true)" title="高精準定位並掃描 900m 店家">⌖</button>
         </div>
         <div class="map-loc-status" id="loc-status"></div>
-        <div class="map-hint" id="map-engine-hint">點擊插畫建築可編輯星級與筆記 · 點擊地圖任意處可新增自訂書籤</div>
+        <div class="map-hint" id="map-engine-hint">移動地圖後點「📡 掃描 900m 內真實店家」即可載入該區超商、美廉社與餐廳</div>
       </div>
 
       <aside class="card places-card">
         <div class="places-head">
-          <h3>附近的好地方</h3>
+          <h3>附近的好地方 (900m)</h3>
           <small id="place-count-label">依距離排序</small>
         </div>
         <div class="place-list" id="place-list"></div>
@@ -482,9 +481,9 @@ button{cursor:pointer;color:inherit;background:none}
               <option value="已造訪">✅ 已造訪</option>
               <option value="常去愛店">❤️ 常去愛店</option>
             </select>
-            <input id="detail-tags" placeholder="🏷️ 標籤 (如: 插座, 不限時)" oninput="saveCurrentPlaceEdits()">
+            <input id="detail-tags" placeholder="🏷️ 標籤 (如: 24H, 咖啡, 取貨)" oninput="saveCurrentPlaceEdits()">
           </div>
-          <textarea class="detail-note-box" id="detail-note" placeholder="📝 點此輸入這家店的專屬筆記、必點餐點或營業資訊（自動儲存）..." oninput="saveCurrentPlaceEdits()"></textarea>
+          <textarea class="detail-note-box" id="detail-note" placeholder="📝 點此輸入這家店的專屬筆記、必買清單或營業資訊（自動儲存）..." oninput="saveCurrentPlaceEdits()"></textarea>
           <div class="detail-actions">
             <button class="pill-btn" onclick="scheduleSelectedPlace()">📅 排入行程</button>
             <button class="primary-btn" onclick="navigateSelectedPlace()">🧭 Google 導航 ↗</button>
@@ -560,8 +559,8 @@ button{cursor:pointer;color:inherit;background:none}
   <div class="modal">
     <div class="modal-head"><h2>🔑 設定 Google Maps API 金鑰</h2><button class="close-btn" onclick="closeGmapKeyModal()">×</button></div>
     <p style="font-size:12px;color:#687770;line-height:1.6;margin-bottom:14px">
-      貼上您剛剛在 Google Cloud 申請的 <b>Maps JavaScript API</b> 金鑰，即可將底圖切換為 Google 官方清新插畫風格地圖。<br>
-      <small style="color:#9aa59f">（金鑰僅安全儲存在您的瀏覽器本機端，不會上傳至公開伺服器）</small>
+      貼上您在 Google Cloud 申請的 <b>Maps JavaScript API</b> 金鑰（若同時啟用 <b>Places API</b>，掃描時更會直接結合 Google 官方地標資料庫）。<br>
+      <small style="color:#9aa59f">（金鑰僅安全儲存在您的瀏覽器本機端，不會上傳至外網）</small>
     </p>
     <div class="field">
       <label>您的 API Key</label>
@@ -579,17 +578,17 @@ button{cursor:pointer;color:inherit;background:none}
 <div class="modal-backdrop" id="add-place-modal">
   <div class="modal">
     <div class="modal-head"><h2>📍 新增自訂地標書籤</h2><button class="close-btn" onclick="closeAddPlaceModal()">×</button></div>
-    <div class="field"><label>地點名稱</label><input id="np-name" placeholder="例如：轉角秘密甜點店"></div>
+    <div class="field"><label>地點名稱</label><input id="np-name" placeholder="例如：7-ELEVEN 逢甲店、美廉社"></div>
     <div class="form-row">
       <div class="field">
         <label>建築分類圖示</label>
         <select id="np-cat">
-          <option value="咖啡">☕ 咖啡廳</option>
-          <option value="餐廳">🍜 餐廳食堂</option>
+          <option value="超商超市">🏪 超商超市 (7-11/美廉社/全聯)</option>
+          <option value="咖啡">☕ 咖啡甜點</option>
+          <option value="餐廳">🍜 餐廳美食</option>
           <option value="服飾">👗 服飾選物</option>
           <option value="公園">🌳 公園綠地</option>
-          <option value="醫院">🏥 醫療診所</option>
-          <option value="超市">🛍️ 超市賣場</option>
+          <option value="醫院">🏥 醫院診所藥局</option>
         </select>
       </div>
       <div class="field">
@@ -601,7 +600,7 @@ button{cursor:pointer;color:inherit;background:none}
         </select>
       </div>
     </div>
-    <div class="field"><label>標籤</label><input id="np-tags" placeholder="例如：有插座、肉桂捲必點"></div>
+    <div class="field"><label>標籤</label><input id="np-tags" placeholder="例如：24H、取貨、有座位"></div>
     <div class="field"><label>專屬筆記</label><textarea id="np-note" rows="3" placeholder="寫下你的心得或營業資訊..."></textarea></div>
     <div class="modal-foot">
       <button class="ghost-btn" onclick="closeAddPlaceModal()">取消</button>
@@ -615,7 +614,7 @@ button{cursor:pointer;color:inherit;background:none}
   <div class="modal cmd-modal">
     <div class="cmd-input-wrap">
       <span style="font-size:16px;color:var(--sage)">⌕</span>
-      <input id="cmd-input" placeholder="搜尋行程、待辦事項、購物清單或地點筆記..." oninput="renderCmdResults(this.value)">
+      <input id="cmd-input" placeholder="搜尋行程、待辦、7-11、美廉社或地點筆記..." oninput="renderCmdResults(this.value)">
       <button class="close-btn" onclick="closeCmdModal()">×</button>
     </div>
     <div class="cmd-results" id="cmd-results"></div>
@@ -633,32 +632,31 @@ function toLocalISO(d = new Date()) {
   return `${y}-${m}-${day}`;
 }
 
-// ═══ Illustrated Building SVGs ═══
+// ═══ Illustrated Building SVGs (Included Convenience Store / 7-11 / SimpleMart icon) ═══
 const BLDG_SVGS = {
   coffee: `<svg viewBox="0 0 48 48" fill="none"><rect x="8" y="20" width="32" height="22" rx="3" fill="#F6E7D8" stroke="#6E523B" stroke-width="2"/><path d="M5 20L10 11H38L43 20H5Z" fill="#C97A57" stroke="#6E523B" stroke-width="2" stroke-linejoin="round"/><path d="M10 20V23C10 24.5 11.5 25.5 13 25.5C14.5 25.5 16 24.5 16 23V20M16 20V23C16 24.5 17.5 25.5 19 25.5C20.5 25.5 22 24.5 22 23V20M22 20V23C22 24.5 23.5 25.5 25 25.5C26.5 25.5 28 24.5 28 23V20M28 20V23C28 24.5 29.5 25.5 31 25.5C32.5 25.5 34 24.5 34 23V20M34 20V23C34 24.5 35.5 25.5 37 25.5C38.5 25.5 40 24.5 40 23V20" stroke="#6E523B" stroke-width="1.5"/><rect x="14" y="29" width="8" height="13" rx="1.5" fill="#8C6249"/><rect x="26" y="29" width="9" height="7" rx="1.5" fill="#B5E2FA" stroke="#6E523B" stroke-width="1.5"/><circle cx="24" cy="15.5" r="2.5" fill="#FFF"/></svg>`,
   clothing: `<svg viewBox="0 0 48 48" fill="none"><rect x="9" y="16" width="30" height="26" rx="3" fill="#FFF0F3" stroke="#7A4958" stroke-width="2"/><path d="M7 16L12 9H36L41 16H7Z" fill="#F29CB0" stroke="#7A4958" stroke-width="2" stroke-linejoin="round"/><rect x="13" y="22" width="11" height="12" rx="2" fill="#E3F2FD" stroke="#7A4958" stroke-width="1.5"/><path d="M18.5 24L16 26.5L17.5 28V32H19.5V28L21 26.5L18.5 24Z" fill="#F29CB0"/><rect x="28" y="26" width="7" height="16" rx="1.5" fill="#D47A92" stroke="#7A4958" stroke-width="1.5"/></svg>`,
   restaurant: `<svg viewBox="0 0 48 48" fill="none"><rect x="8" y="19" width="32" height="23" rx="3" fill="#FFF8E7" stroke="#7C5832" stroke-width="2"/><path d="M6 19C6 13 14 10 24 10C34 10 42 13 42 19H6Z" fill="#F4A261" stroke="#7C5832" stroke-width="2"/><rect x="19" y="28" width="10" height="14" rx="1.5" fill="#E76F51" stroke="#7C5832" stroke-width="1.5"/><circle cx="13" cy="24" r="2.5" fill="#E63946"/><circle cx="35" cy="24" r="2.5" fill="#E63946"/><path d="M21 15H27" stroke="#FFF" stroke-width="2" stroke-linecap="round"/></svg>`,
   hospital: `<svg viewBox="0 0 48 48" fill="none"><rect x="10" y="11" width="28" height="31" rx="3" fill="#FFFFFF" stroke="#3B5B78" stroke-width="2"/><rect x="18" y="6" width="12" height="7" rx="2" fill="#EBF4FF" stroke="#3B5B78" stroke-width="1.8"/><path d="M24 8V11M22.5 9.5H25.5" stroke="#EF4444" stroke-width="1.8" stroke-linecap="round"/><rect x="15" y="17" width="5" height="5" rx="1" fill="#BAE0FF"/><rect x="28" y="17" width="5" height="5" rx="1" fill="#BAE0FF"/><rect x="15" y="25" width="5" height="5" rx="1" fill="#BAE0FF"/><rect x="28" y="25" width="5" height="5" rx="1" fill="#BAE0FF"/><rect x="20" y="33" width="8" height="9" rx="1" fill="#60A5FA" stroke="#3B5B78" stroke-width="1.5"/></svg>`,
   park: `<svg viewBox="0 0 48 48" fill="none"><circle cx="19" cy="21" r="10" fill="#7BC488" stroke="#3D6B47" stroke-width="2"/><circle cx="30" cy="24" r="8" fill="#95D59F" stroke="#3D6B47" stroke-width="2"/><path d="M19 26V39M30 28V39" stroke="#6E523B" stroke-width="2.5" stroke-linecap="round"/><path d="M10 39H38" stroke="#5E9C6A" stroke-width="2.5" stroke-linecap="round"/></svg>`,
-  market: `<svg viewBox="0 0 48 48" fill="none"><rect x="8" y="18" width="32" height="24" rx="3" fill="#F1F8F4" stroke="#3E6B56" stroke-width="2"/><path d="M6 18L10 10H38L42 18H6Z" fill="#52B788" stroke="#3E6B56" stroke-width="2" stroke-linejoin="round"/><rect x="13" y="24" width="10" height="10" rx="1.5" fill="#D8F3DC" stroke="#3E6B56" stroke-width="1.5"/><rect x="27" y="26" width="8" height="16" rx="1.5" fill="#74C69D" stroke="#3E6B56" stroke-width="1.5"/></svg>`
+  market: `<svg viewBox="0 0 48 48" fill="none"><rect x="7" y="16" width="34" height="26" rx="3" fill="#FFFFFF" stroke="#2F5E4E" stroke-width="2"/><rect x="5" y="10" width="38" height="7" rx="2" fill="#2A9D8F" stroke="#2F5E4E" stroke-width="1.8"/><path d="M7 12.5H41" stroke="#F4A261" stroke-width="2"/><path d="M7 14.5H41" stroke="#E63946" stroke-width="1.8"/><rect x="12" y="23" width="12" height="19" rx="1.5" fill="#B5E2FA" stroke="#2F5E4E" stroke-width="1.5"/><rect x="27" y="23" width="10" height="11" rx="1.5" fill="#E8F8F5" stroke="#2F5E4E" stroke-width="1.5"/></svg>`
 };
 
 const CAT_TO_TYPE = {
-  '咖啡': {type:'coffee', bg:'#f6e7d8'},
-  '服飾': {type:'clothing', bg:'#fff0f3'},
-  '餐廳': {type:'restaurant', bg:'#fff8e7'},
-  '公園': {type:'park', bg:'#edf5eb'},
-  '醫院': {type:'hospital', bg:'#ebf4ff'},
-  '超市': {type:'market', bg:'#f1f8f4'}
+  '超商超市': {type:'market', bg:'#e8f7f0'},
+  '超市':     {type:'market', bg:'#e8f7f0'},
+  '咖啡':     {type:'coffee', bg:'#f6e7d8'},
+  '服飾':     {type:'clothing', bg:'#fff0f3'},
+  '餐廳':     {type:'restaurant', bg:'#fff8e7'},
+  '公園':     {type:'park', bg:'#edf5eb'},
+  '醫院':     {type:'hospital', bg:'#ebf4ff'}
 };
 
+// Default places around Xitun, Taichung before first live scan completes
 const DEFAULT_PLACES = [
-  {id:1,name:'小日子手沖咖啡',cat:'咖啡',type:'coffee',bg:'#f6e7d8',lat:24.1512,lng:120.6615,rating:5,status:'常去愛店',tags:'插座, 肉桂捲, 安靜',note:'陽光灑落的轉角手沖咖啡館，平日下午去很適合帶筆電工作。營業 08:30–20:00'},
-  {id:2,name:'日和選物服飾',cat:'服飾',type:'clothing',bg:'#fff0f3',lat:24.1531,lng:120.6642,rating:4,status:'想去的店',tags:'日系棉麻, 雜貨',note:'日系棉麻穿搭與生活雜貨選物店，店員很親切。營業 11:00–21:30'},
-  {id:3,name:'好好家庭食堂',cat:'餐廳',type:'restaurant',bg:'#fff8e7',lat:24.1495,lng:120.6660,rating:5,status:'已造訪',tags:'手作定食, 暖胃湯品',note:'每日更換季節小菜，烤鮭魚定食非常推薦！營業 11:30–21:00'},
-  {id:4,name:'市民綠園道公園',cat:'公園',type:'park',bg:'#edf5eb',lat:24.1488,lng:120.6632,rating:5,status:'常去愛店',tags:'散步, 草地, 寵物友善',note:'大片綠蔭草地與木棧步道，適合午後散步放空。全天開放'},
-  {id:5,name:'安心綜合診所',cat:'醫院',type:'hospital',bg:'#ebf4ff',lat:24.1472,lng:120.6598,rating:4,status:'已造訪',tags:'家醫科, 牙科',note:'社區家庭醫學與牙科門診，掛號動線清晰友善。營業 08:00–21:30'},
-  {id:6,name:'日常有機超市',cat:'超市',type:'market',bg:'#f1f8f4',lat:24.1520,lng:120.6580,rating:4,status:'常去愛店',tags:'燕麥奶, 有機蔬果',note:'有機蔬果、燕麥奶與生活日用品一次補齊。營業 07:00–23:00'}
+  {id:101,name:'7-ELEVEN 逢甲門市',cat:'超商超市',type:'market',bg:'#e8f7f0',lat:24.1788,lng:120.6465,rating:5,status:'常去愛店',tags:'24H, ATM, 店到店',note:'隨時買咖啡與取貨的好地方。點擊上方「📡 掃描 900m 內真實店家」會自動載入您身邊所有超商與美廉社！'},
+  {id:102,name:'美廉社 SimpleMart',cat:'超商超市',type:'market',bg:'#e8f7f0',lat:24.1765,lng:120.6442,rating:4,status:'常去愛店',tags:'社區超市, 飲料零食, 鮮奶',note:'買日常飲料、雞蛋與生活用品超划算。營業 07:00–24:00'},
+  {id:103,name:'小日子手沖咖啡',cat:'咖啡',type:'coffee',bg:'#f6e7d8',lat:24.1748,lng:120.6478,rating:5,status:'常去愛店',tags:'插座, 肉桂捲, 安靜',note:'陽光灑落的轉角手沖咖啡館，平日下午去很適合帶筆電工作。'}
 ];
 
 // ═══ Unified State ═══
@@ -667,8 +665,8 @@ const S = {
   tasks: JSON.parse(localStorage.getItem('bb3_tasks') || '[]'),
   shopping: JSON.parse(localStorage.getItem('bb3_shop') || '[]'),
   favorites: JSON.parse(localStorage.getItem('bb3_favs') || '[]'),
-  places: JSON.parse(localStorage.getItem('bb3_places') || 'null') || DEFAULT_PLACES,
-  userPos: JSON.parse(localStorage.getItem('bb3_user_pos') || '{"lat":24.1502,"lng":120.6625}'),
+  places: JSON.parse(localStorage.getItem('bb4_places') || 'null') || DEFAULT_PLACES,
+  userPos: JSON.parse(localStorage.getItem('bb4_user_pos') || '{"lat":24.1772,"lng":120.6462}'),
   gmapKey: localStorage.getItem('bb3_gmap_key') || '',
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
@@ -678,8 +676,9 @@ const S = {
   evBgColor: '#eaf6ef',
   mapCat: '全部',
   favOnly: false,
-  selectedPlaceId: 1,
-  pendingCoords: null
+  selectedPlaceId: 101,
+  pendingCoords: null,
+  hasAutoScanned: false
 };
 
 const TITLE_COLORS = ['#263633','#55645d','#ef4444','#f97316','#d97706','#15803d','#1d4ed8','#7e22ce','#be185d','#ffffff'];
@@ -712,15 +711,15 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.classList.remove('show'), 2500);
+  t._t = setTimeout(() => t.classList.remove('show'), 2800);
 }
 function save() {
   localStorage.setItem('bb3_events', JSON.stringify(S.events));
   localStorage.setItem('bb3_tasks', JSON.stringify(S.tasks));
   localStorage.setItem('bb3_shop', JSON.stringify(S.shopping));
   localStorage.setItem('bb3_favs', JSON.stringify(S.favorites));
-  localStorage.setItem('bb3_places', JSON.stringify(S.places));
-  localStorage.setItem('bb3_user_pos', JSON.stringify(S.userPos));
+  localStorage.setItem('bb4_places', JSON.stringify(S.places));
+  localStorage.setItem('bb4_user_pos', JSON.stringify(S.userPos));
 }
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -737,7 +736,7 @@ function calcDistanceMeters(lat1, lon1, lat2, lon2) {
 }
 function formatDist(m) {
   if (!isFinite(m)) return '';
-  return m < 1000 ? `${Math.round(m)} m` : `${(m/1000).toFixed(1)} km`;
+  return m < 1000 ? `${Math.round(m)} m` : `${(m/1000).toFixed(2)} km`;
 }
 
 // ═══ TODAY ═══
@@ -1038,16 +1037,18 @@ function goToToday() {
 }
 
 // ═════════════════════════════════════════════════════════════════════════
-// ═══ REAL MAP ENGINE (Google Maps JavaScript API + Leaflet OSM Dual Mode)
+// ═══ REAL MAP ENGINE + 900m COMPREHENSIVE TAIWAN STORE SCANNER
 // ═════════════════════════════════════════════════════════════════════════
 let mapMode = 'none'; // 'google' | 'leaflet'
 let gMap = null;
 let gMarkers = [];
 let gUserMarker = null;
+let gCircle = null;
 
 let leafletMap = null;
 let leafletMarkersLayer = null;
 let leafletUserMarker = null;
+let leafletCircle = null;
 
 function openGmapKeyModal() {
   document.getElementById('gmap-key-input').value = S.gmapKey;
@@ -1073,7 +1074,6 @@ function clearGmapKey() {
   setTimeout(() => location.reload(), 400);
 }
 
-// Catch Google Maps Auth Failure gracefully
 window.gm_authFailure = function() {
   toast('⚠️ Google 金鑰驗證未通過或未啟用帳單，已自動切換為高解析真實地圖');
   localStorage.removeItem('bb3_gmap_key');
@@ -1102,7 +1102,8 @@ function loadGoogleMapsScript(key) {
     return;
   }
   const s = document.createElement('script');
-  s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=setupGoogleMap`;
+  // Load with places library so we can also query Google Places API if enabled!
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&libraries=places&callback=setupGoogleMap`;
   s.async = true;
   s.onerror = () => {
     toast('無法載入 Google Maps，已自動切換至內建真實地圖');
@@ -1152,7 +1153,6 @@ function initLeafletFallback() {
     zoomControl: false
   });
 
-  // Carto Voyager clean illustrated-style real street tiles
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap &copy; CARTO'
@@ -1168,11 +1168,10 @@ function initLeafletFallback() {
   locateMe(false);
 }
 
-// Create SVG data URL for Google Maps Marker
 function buildGmapSvgIcon(p, isFav, isAct) {
   const borderCol = isAct ? '#4a987b' : '#ffffff';
   const favBadge = isFav ? `<circle cx="48" cy="10" r="8" fill="#ef4444" stroke="#fff" stroke-width="2"/><text x="48" y="13" font-size="9" fill="#fff" text-anchor="middle">♥</text>` : '';
-  const innerSvg = BLDG_SVGS[p.type] || BLDG_SVGS.coffee;
+  const innerSvg = BLDG_SVGS[p.type] || BLDG_SVGS.market;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="64" viewBox="0 0 60 64">
     <rect x="6" y="4" width="48" height="48" rx="14" fill="${p.bg || '#fff'}" stroke="${borderCol}" stroke-width="3"/>
     <g transform="translate(6, 4)">${innerSvg}</g>
@@ -1180,32 +1179,45 @@ function buildGmapSvgIcon(p, isFav, isAct) {
   </svg>`;
   return {
     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
-    scaledSize: new google.maps.Size(54, 58),
-    anchor: new google.maps.Point(27, 29)
+    scaledSize: new google.maps.Size(50, 54),
+    anchor: new google.maps.Point(25, 27)
   };
 }
 
 function renderMapUI() {
-  // 1. Render Category Filter Pills
+  // 1. Category Filter Pills (Added 🏪 超商超市 explicitly)
   const fc = document.getElementById('map-filters');
-  const cats = ['全部','咖啡','服飾','餐廳','公園','醫院','超市'];
-  const icons = {'咖啡':'☕','服飾':'👗','餐廳':'🍜','公園':'🌳','醫院':'🏥','超市':'🛍️'};
+  const cats = ['全部','超商超市','咖啡','餐廳','服飾','公園','醫院'];
+  const icons = {'超商超市':'🏪','咖啡':'☕','餐廳':'🍜','服飾':'👗','公園':'🌳','醫院':'🏥'};
   fc.innerHTML = cats.map(c => `<button class="map-filter${!S.favOnly && S.mapCat === c ? ' on' : ''}" onclick="filterByCat('${c}')">${c === '全部' ? '全部地點' : icons[c] + ' ' + c}</button>`).join('');
 
   // 2. Update distances from userPos
   S.places.forEach(p => {
+    if (p.cat === '超市') p.cat = '超商超市';
     p._distM = calcDistanceMeters(S.userPos.lat, S.userPos.lng, p.lat, p.lng);
     p.dist = formatDist(p._distM);
   });
 
   const visiblePlaces = getFilteredPlaces();
 
-  // 3. Render Markers on Active Map Engine
+  // 3. Render 900m Radius Circle & Markers
   if (mapMode === 'leaflet' && leafletMap && leafletMarkersLayer) {
     leafletMarkersLayer.clearLayers();
 
-    // User Blue Dot
     if (leafletUserMarker) leafletMap.removeLayer(leafletUserMarker);
+    if (leafletCircle) leafletMap.removeLayer(leafletCircle);
+
+    // Draw 900m subtle green exploration circle
+    leafletCircle = L.circle([S.userPos.lat, S.userPos.lng], {
+      radius: 900,
+      color: '#4a987b',
+      weight: 1.5,
+      dashArray: '5, 6',
+      fillColor: '#4a987b',
+      fillOpacity: 0.04,
+      interactive: false
+    }).addTo(leafletMap);
+
     const gpsIcon = L.divIcon({
       className: '',
       html: `<div class="user-gps-wrap" title="你的目前精準位置"><div class="gps-pulse"></div><div class="gps-dot"></div></div>`,
@@ -1214,14 +1226,13 @@ function renderMapUI() {
     });
     leafletUserMarker = L.marker([S.userPos.lat, S.userPos.lng], { icon: gpsIcon, zIndexOffset: 1000 }).addTo(leafletMap);
 
-    // Building Markers
     visiblePlaces.forEach(p => {
       const isFav = S.favorites.includes(p.id);
       const isAct = S.selectedPlaceId === p.id;
       const html = `
         <div class="bldg-marker${isAct ? ' active' : ''}">
           <div class="bldg-card" style="background:${p.bg || '#fff'}">
-            ${BLDG_SVGS[p.type] || BLDG_SVGS.coffee}
+            ${BLDG_SVGS[p.type] || BLDG_SVGS.market}
             ${isFav ? '<div class="bldg-fav">♥</div>' : ''}
           </div>
           <span class="bldg-label">${esc(p.name)}</span>
@@ -1229,8 +1240,8 @@ function renderMapUI() {
       const icon = L.divIcon({
         className: '',
         html,
-        iconSize: [80, 74],
-        iconAnchor: [40, 37]
+        iconSize: [90, 70],
+        iconAnchor: [45, 35]
       });
       const m = L.marker([p.lat, p.lng], { icon, zIndexOffset: isAct ? 900 : 100 }).addTo(leafletMarkersLayer);
       m.on('click', (e) => {
@@ -1243,6 +1254,20 @@ function renderMapUI() {
     gMarkers = [];
 
     if (gUserMarker) gUserMarker.setMap(null);
+    if (gCircle) gCircle.setMap(null);
+
+    gCircle = new google.maps.Circle({
+      strokeColor: '#4a987b',
+      strokeOpacity: 0.6,
+      strokeWeight: 1.5,
+      fillColor: '#4a987b',
+      fillOpacity: 0.05,
+      map: gMap,
+      center: S.userPos,
+      radius: 900,
+      clickable: false
+    });
+
     gUserMarker = new google.maps.Marker({
       position: S.userPos,
       map: gMap,
@@ -1264,7 +1289,7 @@ function renderMapUI() {
       const m = new google.maps.Marker({
         position: { lat: p.lat, lng: p.lng },
         map: gMap,
-        title: p.name,
+        title: `${p.name} (${p.dist})`,
         zIndex: isAct ? 900 : 100,
         icon: buildGmapSvgIcon(p, isFav, isAct)
       });
@@ -1289,9 +1314,9 @@ function getFilteredPlaces() {
 
 function renderPlaceList(list) {
   const el = document.getElementById('place-list');
-  document.getElementById('place-count-label').textContent = `共 ${list.length} 個地點`;
+  document.getElementById('place-count-label').textContent = `共 ${list.length} 家店`;
   if (!list.length) {
-    el.innerHTML = '<div class="empty" style="padding:20px 0">找不到符合條件的地點<br><small>試試點擊上方「📡 掃描附近真實店家」</small></div>';
+    el.innerHTML = '<div class="empty" style="padding:20px 0">此分類目前沒有地點<br><small>點上方「📡 掃描 900m 內真實店家」立即載入</small></div>';
     return;
   }
   el.innerHTML = list.map(p => {
@@ -1299,10 +1324,10 @@ function renderPlaceList(list) {
     const chosen = S.selectedPlaceId === p.id ? ' chosen' : '';
     const stars = '⭐'.repeat(p.rating || 4);
     return `<div class="place-item${chosen}" onclick="selectPlace(${p.id}, true)">
-      <div class="place-icon" style="background:${p.bg || '#f6e7d8'}">${BLDG_SVGS[p.type] || BLDG_SVGS.coffee}</div>
+      <div class="place-icon" style="background:${p.bg || '#e8f7f0'}">${BLDG_SVGS[p.type] || BLDG_SVGS.market}</div>
       <div class="place-info">
         <strong>${esc(p.name)}</strong>
-        <small><span>${p.cat} · ${p.dist || ''}</span><span>${stars}</span></small>
+        <small><span>${p.cat} · <b>${p.dist || ''}</b></span><span>${stars}</span></small>
       </div>
       <button class="heart-btn${isFav ? ' saved' : ''}" onclick="event.stopPropagation();toggleFav(${p.id})" title="收藏地點">${isFav ? '♥' : '♡'}</button>
     </div>`;
@@ -1356,7 +1381,7 @@ function saveCurrentPlaceEdits() {
 function scheduleSelectedPlace() {
   const p = S.places.find(x => x.id === S.selectedPlaceId);
   if (!p) { toast('請先選擇一個地點'); return; }
-  openEventModal(toLocalISO(), `前往：${p.name}`, `${p.cat} · ${p.tags || ''} ${p.note || ''}`.trim());
+  openEventModal(toLocalISO(), `前往：${p.name}`, `${p.cat} (${p.dist}) · ${p.tags || ''} ${p.note || ''}`.trim());
 }
 
 function navigateSelectedPlace() {
@@ -1366,19 +1391,19 @@ function navigateSelectedPlace() {
   window.open(url, '_blank');
 }
 
-// ═══ Accurate Hardware GPS Positioning + Real Overpass Nearby Scan ═══
+// ═══ Accurate Hardware GPS Positioning + Auto-Scan 900m Real Stores ═══
 function locateMe(userTriggered = true) {
   const btn = document.getElementById('loc-ctrl');
   const status = document.getElementById('loc-status');
   btn.classList.add('locating');
   status.style.display = 'block';
-  status.textContent = '📡 正在啟動硬體高精準 GPS 定位...';
+  status.textContent = '📡 正在取得高精準 GPS 並掃描 900m 內店家...';
   status.style.color = 'var(--sage)';
 
   if (!navigator.geolocation) {
     btn.classList.remove('locating');
     status.style.display = 'none';
-    if (userTriggered) toast('您的瀏覽器不支援 GPS 定位');
+    searchNearbyRealPlaces(false);
     return;
   }
 
@@ -1389,17 +1414,6 @@ function locateMe(userTriggered = true) {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude
       };
-
-      // Check if user moved far from sample places; if first time locating far away, shift sample places near user
-      const distFromOld = calcDistanceMeters(S.userPos.lat, S.userPos.lng, newPos.lat, newPos.lng);
-      if (distFromOld > 3000 && S.places.length <= 6) {
-        const dLat = newPos.lat - S.userPos.lat;
-        const dLng = newPos.lng - S.userPos.lng;
-        S.places.forEach(p => {
-          p.lat = +(p.lat + dLat).toFixed(6);
-          p.lng = +(p.lng + dLng).toFixed(6);
-        });
-      }
 
       S.userPos = newPos;
       save();
@@ -1412,90 +1426,241 @@ function locateMe(userTriggered = true) {
       }
 
       renderMapUI();
-      status.textContent = `✅ 精準定位成功 (±${Math.round(pos.coords.accuracy)}m)`;
+      status.textContent = `✅ 定位成功 (±${Math.round(pos.coords.accuracy)}m)，正在載入周邊 900m 店家...`;
       status.style.color = '#16a34a';
-      setTimeout(() => status.style.display = 'none', 3200);
-      if (userTriggered) toast(`📍 已定位至您的真實位置（精準度 ±${Math.round(pos.coords.accuracy)}m）`);
+
+      // Automatically trigger 900m real store scan around user's real position!
+      searchNearbyRealPlaces(userTriggered, newPos);
     },
     err => {
       btn.classList.remove('locating');
-      status.textContent = '⚠️ 定位權限未開啟，顯示預設街區';
+      status.textContent = '⚠️ 未開啟定位權限，正在掃描目前地圖中心 900m 店家...';
       status.style.color = '#d97706';
-      setTimeout(() => status.style.display = 'none', 3200);
-      if (userTriggered) toast('請在瀏覽器網址列左側允許「位置」權限以取得精準定位');
+      searchNearbyRealPlaces(userTriggered);
     },
-    { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
 }
 
-// Fetch real nearby businesses around current map center via OpenStreetMap Overpass API
-async function searchNearbyRealPlaces() {
-  let center = S.userPos;
-  if (mapMode === 'leaflet' && leafletMap) {
-    const c = leafletMap.getCenter();
-    center = { lat: c.lat, lng: c.lng };
-  } else if (mapMode === 'google' && gMap) {
-    const c = gMap.getCenter();
-    center = { lat: c.lat(), lng: c.lng() };
+// Helper: Classify store & format name with branch/street so multiple 7-11s or SimpleMarts don't collide
+function classifyAndFormatOsmElement(tags) {
+  let rawName = tags.name || tags['name:zh'] || tags.brand || tags.operator || '';
+  const branch = tags.branch || tags['addr:street'] || '';
+  const lower = (rawName + ' ' + (tags.brand || '') + ' ' + (tags.operator || '')).toLowerCase();
+
+  let cat = '餐廳';
+  if (
+    tags.shop === 'convenience' ||
+    tags.shop === 'supermarket' ||
+    tags.shop === 'department_store' ||
+    tags.shop === 'chemist' ||
+    tags.shop === 'mall' ||
+    lower.includes('7-eleven') || lower.includes('7-11') || lower.includes('統一超商') ||
+    lower.includes('全家') || lower.includes('familymart') ||
+    lower.includes('美廉社') || lower.includes('simple mart') || lower.includes('simplemart') ||
+    lower.includes('全聯') || lower.includes('pxmart') ||
+    lower.includes('萊爾富') || lower.includes('hilife') ||
+    lower.includes('ok超商') || lower.includes('ok mart') ||
+    lower.includes('楓康') || lower.includes('家樂福') ||
+    lower.includes('蝦皮') || lower.includes('屈臣氏') || lower.includes('康是美') || lower.includes('寶雅')
+  ) {
+    cat = '超商超市';
+    if (!rawName) rawName = '便利商店 / 超市';
+  } else if (tags.amenity === 'cafe' || tags.shop === 'coffee' || tags.shop === 'bakery' || tags.shop === 'pastry' || tags.shop === 'tea' || tags.amenity === 'ice_cream' || lower.includes('咖啡') || lower.includes('星巴克') || lower.includes('路易莎') || lower.includes('cama')) {
+    cat = '咖啡';
+  } else if (tags.shop === 'clothes' || tags.shop === 'shoes' || tags.shop === 'boutique' || tags.shop === 'fashion' || tags.shop === 'bag') {
+    cat = '服飾';
+  } else if (tags.amenity === 'hospital' || tags.amenity === 'clinic' || tags.amenity === 'doctors' || tags.amenity === 'dentist' || tags.amenity === 'pharmacy' || lower.includes('診所') || lower.includes('醫院') || lower.includes('藥局')) {
+    cat = '醫院';
+  } else if (tags.leisure === 'park' || tags.leisure === 'garden' || tags.leisure === 'playground') {
+    cat = '公園';
+  } else {
+    cat = '餐廳';
   }
 
-  toast('📡 正在搜尋周邊 800m 內的真實店家...');
-  const query = `
-    [out:json][timeout:10];
+  // Append branch name if it's a chain store so every 7-Eleven / SimpleMart is clearly distinguishable
+  let displayName = rawName;
+  if (branch && !rawName.includes(branch)) {
+    displayName = `${rawName} (${branch})`;
+  }
+  return { displayName, cat };
+}
+
+// Fetch real nearby businesses within 900m (Supports both nodes & building ways + multi-mirror fallback + Google Places API)
+async function searchNearbyRealPlaces(showToastMsg = true, customCenter = null) {
+  const status = document.getElementById('loc-status');
+  const scanBtn = document.getElementById('scan-btn');
+
+  let center = customCenter || S.userPos;
+  if (!customCenter) {
+    if (mapMode === 'leaflet' && leafletMap) {
+      const c = leafletMap.getCenter();
+      center = { lat: c.lat, lng: c.lng };
+    } else if (mapMode === 'google' && gMap) {
+      const c = gMap.getCenter();
+      center = { lat: c.lat(), lng: c.lng() };
+    }
+  }
+
+  // Also move the 900m scan center to current center so distances & circle match what user is scanning
+  S.userPos = { lat: +center.lat.toFixed(6), lng: +center.lng.toFixed(6) };
+
+  status.style.display = 'block';
+  status.textContent = '📡 正在掃描方圓 900m 內的超商、美廉社與店家...';
+  status.style.color = 'var(--sage)';
+  if (scanBtn) scanBtn.textContent = '⏳ 掃描中...';
+
+  // 1. If Google Maps Places API is available, run Google Places NearbySearch in parallel!
+  if (mapMode === 'google' && window.google?.maps?.places && gMap) {
+    try {
+      const service = new google.maps.places.PlacesService(gMap);
+      service.nearbySearch({
+        location: center,
+        radius: 900,
+        keyword: '7-ELEVEN|美廉社|全家|全聯|咖啡|餐廳|診所'
+      }, (results, pStatus) => {
+        if (pStatus === google.maps.places.PlacesServiceStatus.OK && results) {
+          results.forEach(r => {
+            if (!r.geometry?.location || !r.name) return;
+            const rLat = r.geometry.location.lat();
+            const rLng = r.geometry.location.lng();
+            const isDup = S.places.some(p => calcDistanceMeters(p.lat, p.lng, rLat, rLng) < 22 && p.name.includes(r.name.slice(0,4)));
+            if (isDup) return;
+
+            const { displayName, cat } = classifyAndFormatOsmElement({ name: r.name });
+            const cfg = CAT_TO_TYPE[cat] || CAT_TO_TYPE['超商超市'];
+            S.places.push({
+              id: 'gm_' + (r.place_id || Date.now() + Math.random()),
+              name: displayName,
+              cat,
+              type: cfg.type,
+              bg: cfg.bg,
+              lat: rLat,
+              lng: rLng,
+              rating: Math.round(r.rating || 4),
+              status: '想去的店',
+              tags: r.vicinity || '900m 內真實店家',
+              note: `Google 評分：${r.rating || '無'} ⭐ · 地址：${r.vicinity || '附近'}`
+            });
+          });
+          save();
+          renderMapUI();
+        }
+      });
+    } catch (e) {}
+  }
+
+  // 2. Comprehensive Overpass Query using `nwr` (Nodes + Ways + Relations) and `out center` within 900m!
+  const overpassQuery = `
+    [out:json][timeout:15];
     (
-      node["amenity"~"cafe|restaurant|fast_food|hospital|clinic|doctors"](around:800,${center.lat},${center.lng});
-      node["shop"~"clothes|supermarket|convenience|bakery"](around:800,${center.lat},${center.lng});
-      node["leisure"="park"](around:800,${center.lat},${center.lng});
+      nwr["shop"~"convenience|supermarket|department_store|bakery|coffee|tea|clothes|shoes|chemist|books|mall|pastry|greengrocer"](around:900,${center.lat},${center.lng});
+      nwr["amenity"~"cafe|restaurant|fast_food|food_court|ice_cream|bar|hospital|clinic|doctors|dentist|pharmacy"](around:900,${center.lat},${center.lng});
+      nwr["name"~"7-ELEVEN|7-Eleven|7-11|統一超商|全家|FamilyMart|美廉社|Simple Mart|全聯|萊爾富|OK超商|康是美|屈臣氏|寶雅|蝦皮|星巴克|路易莎"](around:900,${center.lat},${center.lng});
+      nwr["leisure"="park"](around:900,${center.lat},${center.lng});
     );
-    out body 18;
+    out center 140;
   `;
 
-  try {
-    const res = await fetch('https://overpass-api.de/api/interpreter', {
-      method: 'POST',
-      body: query
-    });
-    const data = await res.json();
-    if (!data.elements || !data.elements.length) {
-      toast('這附近暫無相符的開放圖資店家');
-      return;
-    }
+  const endpoints = [
+    'https://overpass-api.de/api/interpreter',
+    'https://overpass.kumi.systems/api/interpreter',
+    'https://maps.mail.ru/osm/tools/overpass/api/interpreter'
+  ];
 
-    let added = 0;
-    data.elements.forEach(el => {
-      const name = el.tags?.name;
-      if (!name || S.places.some(p => p.name === name)) return;
-
-      let cat = '餐廳';
-      if (el.tags.amenity === 'cafe' || el.tags.shop === 'bakery') cat = '咖啡';
-      else if (el.tags.shop === 'clothes') cat = '服飾';
-      else if (el.tags.amenity === 'hospital' || el.tags.amenity === 'clinic' || el.tags.amenity === 'doctors') cat = '醫院';
-      else if (el.tags.leisure === 'park') cat = '公園';
-      else if (el.tags.shop === 'supermarket' || el.tags.shop === 'convenience') cat = '超市';
-
-      const cfg = CAT_TO_TYPE[cat] || CAT_TO_TYPE['餐廳'];
-      S.places.push({
-        id: Date.now() + Math.floor(Math.random() * 10000),
-        name,
-        cat,
-        type: cfg.type,
-        bg: cfg.bg,
-        lat: el.lat,
-        lng: el.lon,
-        rating: 4,
-        status: '想去的店',
-        tags: el.tags['addr:street'] || '周邊探索',
-        note: el.tags.opening_hours ? `營業時間：${el.tags.opening_hours}` : '點擊此處新增您的造訪筆記...'
+  let data = null;
+  for (const url of endpoints) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+        body: 'data=' + encodeURIComponent(overpassQuery)
       });
-      added++;
-    });
-
-    save();
-    renderMapUI();
-    toast(`✨ 成功載入 ${added} 家周邊真實店家！`);
-  } catch (e) {
-    toast('連線搜尋逾時，請稍後再試');
+      if (res.ok) {
+        data = await res.json();
+        if (data && data.elements) break;
+      }
+    } catch (err) {
+      console.warn('Overpass mirror failed, trying next:', url);
+    }
   }
+
+  if (scanBtn) scanBtn.textContent = '📡 掃描 900m 內真實店家';
+
+  if (!data || !data.elements || !data.elements.length) {
+    status.textContent = '⚠️ 目前區域圖資伺服器忙碌，請再點一次掃描';
+    setTimeout(() => status.style.display = 'none', 3500);
+    if (showToastMsg) toast('圖資伺服器忙碌中，請稍候再點一次「📡 掃描 900m 內真實店家」');
+    return;
+  }
+
+  // Keep user's favorited or manually edited places, and remove old far-away unedited places
+  S.places = S.places.filter(p => {
+    const d = calcDistanceMeters(center.lat, center.lng, p.lat, p.lng);
+    return S.favorites.includes(p.id) || p.isCustom || d <= 950;
+  });
+
+  let added = 0;
+  data.elements.forEach(el => {
+    const tags = el.tags || {};
+    const lat = el.lat || el.center?.lat;
+    const lng = el.lon || el.center?.lon;
+    if (!lat || !lng) return;
+
+    const dist = calcDistanceMeters(center.lat, center.lng, lat, lng);
+    if (dist > 920) return; // Strictly within ~900m
+
+    const { displayName, cat } = classifyAndFormatOsmElement(tags);
+    if (!displayName) return;
+
+    // Deduplicate by coordinate proximity (< 18 meters) + same category, NOT by global name!
+    const existing = S.places.find(p =>
+      p.osmId === el.id ||
+      (calcDistanceMeters(p.lat, p.lng, lat, lng) < 18 && p.cat === cat)
+    );
+    if (existing) return;
+
+    const cfg = CAT_TO_TYPE[cat] || CAT_TO_TYPE['餐廳'];
+    const addr = [tags['addr:street'], tags['addr:housenumber']].filter(Boolean).join('');
+    const hours = tags.opening_hours ? `營業：${tags.opening_hours}` : (cat === '超商超市' ? '便利商店 / 超市' : '');
+
+    S.places.push({
+      id: Date.now() + Math.floor(Math.random() * 1000000),
+      osmId: el.id,
+      name: displayName,
+      cat,
+      type: cfg.type,
+      bg: cfg.bg,
+      lat,
+      lng,
+      rating: 4,
+      status: '想去的店',
+      tags: [addr, tags.brand].filter(Boolean).join(', ') || `${cat} (900m內)`,
+      note: [hours, addr ? `地址：${addr}` : ''].filter(Boolean).join(' · ') || '點擊此處新增您的專屬筆記...'
+    });
+    added++;
+  });
+
+  // Sort by distance and keep closest 100 within 900m so the map stays fast & clear
+  S.places.forEach(p => {
+    p._distM = calcDistanceMeters(center.lat, center.lng, p.lat, p.lng);
+  });
+  S.places.sort((a, b) => a._distM - b._distM);
+  if (S.places.length > 100) {
+    S.places = S.places.slice(0, 100);
+  }
+  if (S.places.length) {
+    S.selectedPlaceId = S.places[0].id;
+  }
+
+  save();
+  renderMapUI();
+
+  const total900 = S.places.filter(p => p._distM <= 920).length;
+  status.textContent = `✅ 已顯示 900m 內共 ${total900} 家真實店家！`;
+  status.style.color = '#16a34a';
+  setTimeout(() => status.style.display = 'none', 4000);
+  if (showToastMsg) toast(`✨ 掃描完成！地圖上已顯示方圓 900m 內共 ${total900} 家真實店家（含超商與超市）`);
 }
 
 // Add Custom Bookmark Modal
@@ -1528,11 +1693,12 @@ function saveNewPlace() {
   const rating = Number(document.getElementById('np-rating').value) || 4;
   const tags = document.getElementById('np-tags').value.trim();
   const note = document.getElementById('np-note').value.trim();
-  const cfg = CAT_TO_TYPE[cat] || CAT_TO_TYPE['咖啡'];
+  const cfg = CAT_TO_TYPE[cat] || CAT_TO_TYPE['超商超市'];
   const coords = S.pendingCoords || S.userPos;
 
   const newPlace = {
     id: Date.now(),
+    isCustom: true,
     name,
     cat,
     type: cfg.type,
@@ -1694,7 +1860,7 @@ function renderCmdResults(q) {
   });
   S.places.forEach(p => {
     if (!q || p.name.toLowerCase().includes(q) || p.cat.includes(q) || (p.note || '').toLowerCase().includes(q) || (p.tags || '').toLowerCase().includes(q)) {
-      res.push({type: '地點', title: p.name, sub: `${p.cat} · ⭐${p.rating || 4}`, act: () => { closeCmdModal(); showView('map'); setTimeout(() => selectPlace(p.id, true), 200); }});
+      res.push({type: '地點', title: p.name, sub: `${p.cat} · ${p.dist || ''} · ⭐${p.rating || 4}`, act: () => { closeCmdModal(); showView('map'); setTimeout(() => selectPlace(p.id, true), 200); }});
     }
   });
 
@@ -1703,7 +1869,7 @@ function renderCmdResults(q) {
     box.innerHTML = '<div class="empty" style="padding:24px 0">找不到相符的內容</div>';
     return;
   }
-  box.innerHTML = res.slice(0, 12).map((r, idx) => `<div class="cmd-item" data-idx="${idx}"><span class="cmd-badge">${r.type}</span><span class="cmd-title">${esc(r.title)}</span><span class="cmd-sub">${esc(r.sub)}</span></div>`).join('');
+  box.innerHTML = res.slice(0, 15).map((r, idx) => `<div class="cmd-item" data-idx="${idx}"><span class="cmd-badge">${r.type}</span><span class="cmd-title">${esc(r.title)}</span><span class="cmd-sub">${esc(r.sub)}</span></div>`).join('');
   box.querySelectorAll('.cmd-item').forEach(el => {
     el.onclick = () => res[+el.dataset.idx].act();
   });
@@ -1736,7 +1902,7 @@ function initSample(force = false) {
       {id:1,title:'起床 & 慢慢準備',start:'07:30',end:'08:30',dateISO:iso,titleColor:'#263633',bgColor:'#eaf6ef',note:'☀️ 晨間例行'},
       {id:2,title:'專案靈感會議',start:'09:00',end:'10:00',dateISO:iso,titleColor:'#263633',bgColor:'#f0f4fb',note:'📍 線上會議 · 工作'},
       {id:3,title:'和朋友吃午餐',start:'12:30',end:'13:30',dateISO:iso,titleColor:'#263633',bgColor:'#fff8e8',note:'📍 小日子手沖咖啡'},
-      {id:4,title:'去超市補充生活用品',start:'14:00',end:'15:00',dateISO:iso,titleColor:'#263633',bgColor:'#fff4f1',note:'🛒 記得買燕麥奶'},
+      {id:4,title:'去美廉社 / 超商補貨',start:'14:00',end:'15:00',dateISO:iso,titleColor:'#263633',bgColor:'#fff4f1',note:'🛒 記得買燕麥奶與取貨'},
       {id:5,title:'準備休息',start:'21:30',end:'22:30',dateISO:iso,titleColor:'#263633',bgColor:'#f3edfa',note:'🌙 晚安'},
       {id:6,title:'團隊同步會議',start:'10:00',end:'11:00',dateISO:`${y}-${m}-06`,titleColor:'#ffffff',bgColor:'#91a6cf',note:'週會同步'},
       {id:7,title:'和 Mina 吃飯',start:'18:30',end:'20:00',dateISO:`${y}-${m}-14`,titleColor:'#ffffff',bgColor:'#e6a18e',note:'好好家庭食堂'}
@@ -1758,7 +1924,7 @@ function initSample(force = false) {
     ];
   }
   if (force || !S.favorites.length) {
-    S.favorites = [1, 3];
+    S.favorites = [101, 102];
   }
   if (force) {
     S.places = JSON.parse(JSON.stringify(DEFAULT_PLACES));
@@ -1771,8 +1937,11 @@ function resetDemoData() {
     initSample(true);
     initToday();
     renderCalendar();
-    if (mapMode !== 'none') renderMapUI();
-    toast('已還原預設範例資料 🌱');
+    if (mapMode !== 'none') {
+      renderMapUI();
+      searchNearbyRealPlaces(true);
+    }
+    toast('已還原預設資料並重新掃描周邊 🌱');
   }
 }
 
