@@ -721,7 +721,6 @@ button{cursor:pointer;color:inherit;background:none}
           <option value="服飾">👗 服飾選物</option>
           <option value="公園">🌳 公園綠地</option>
           <option value="醫院">🏥 醫院診所藥局</option>
-          <option value="飲料甜點">🧋 飲料甜點手搖飲</option>
         </select>
       </div>
       <div class="field">
@@ -785,8 +784,7 @@ const CAT_TO_TYPE = {
   '服飾':     {type:'clothing', bg:'#fff0f3'},
   '餐廳':     {type:'restaurant', bg:'#fff8e7'},
   '公園':     {type:'park', bg:'#edf5eb'},
-  '醫院':     {type:'hospital', bg:'#ebf4ff'},
-  '飲料甜點': {type:'coffee', bg:'#fdf4ff'}
+  '醫院':     {type:'hospital', bg:'#ebf4ff'}
 };
 
 const DEFAULT_PLACES = [
@@ -1358,8 +1356,8 @@ function buildGmapSvgIcon(p, isFav, isAct) {
 
 function renderMapUI() {
   const fc = document.getElementById('map-filters');
-  const cats = ['全部','旅遊計畫','喜愛的地點','想要去吃的餐廳','飲料甜點','超商超市','咖啡','服飾','公園','醫院'];
-  const icons = {'旅遊計畫':'🧳','喜愛的地點':'❤️','想要去吃的餐廳':'🍴','飲料甜點':'🧋','超商超市':'🏪','咖啡':'☕','餐廳':'🍜','服飾':'👗','公園':'🌳','醫院':'🏥'};
+  const cats = ['全部','旅遊計畫','喜愛的地點','想要去吃的餐廳','超商超市','咖啡','服飾','公園','醫院'];
+  const icons = {'旅遊計畫':'🧳','喜愛的地點':'❤️','想要去吃的餐廳':'🍴','超商超市':'🏪','咖啡':'☕','餐廳':'🍜','服飾':'👗','公園':'🌳','醫院':'🏥'};
   fc.innerHTML = cats.map(c => `<button class="map-filter${!S.favOnly && S.mapCat === c ? ' on' : ''}" onclick="filterByCat('${c}')">${c === '全部' ? '全部地點' : icons[c] + ' ' + c}</button>`).join('');
 
   S.places.forEach(p => {
@@ -1631,9 +1629,7 @@ function classifyAndFormatOsmElement(tags) {
   ) {
     cat = '超商超市';
     if (!rawName) rawName = '便利商店 / 超市';
-  } else if (lower.includes('飲料') || lower.includes('甜點') || lower.includes('茶') || lower.includes('冰') || lower.includes('50嵐') || lower.includes('可不可') || lower.includes('清心') || lower.includes('麻古') || lower.includes('茶湯會') || lower.includes('迷客夏') || tags.shop === 'beverages' || tags.shop === 'bubble_tea' || tags.shop === 'pastry' || tags.shop === 'dessert') {
-    cat = '飲料甜點';
-  } else if (tags.amenity === 'cafe' || tags.shop === 'coffee' || tags.shop === 'bakery' || tags.amenity === 'ice_cream' || lower.includes('咖啡') || lower.includes('星巴克') || lower.includes('路易莎') || lower.includes('cama')) {
+  } else if (tags.amenity === 'cafe' || tags.shop === 'coffee' || tags.shop === 'bakery' || tags.shop === 'pastry' || tags.shop === 'tea' || tags.amenity === 'ice_cream' || lower.includes('咖啡') || lower.includes('星巴克') || lower.includes('路易莎') || lower.includes('cama')) {
     cat = '咖啡';
   } else if (tags.shop === 'clothes' || tags.shop === 'shoes' || tags.shop === 'boutique' || tags.shop === 'fashion' || tags.shop === 'bag') {
     cat = '服飾';
@@ -1716,9 +1712,9 @@ async function searchNearbyRealPlaces(showToastMsg = true, customCenter = null) 
   const overpassQuery = `
     [out:json][timeout:15];
     (
-      nwr["shop"~"convenience|supermarket|department_store|bakery|coffee|tea|beverages|bubble_tea|dessert|clothes|shoes|chemist|books|mall|pastry|greengrocer"](around:900,${center.lat},${center.lng});
+      nwr["shop"~"convenience|supermarket|department_store|bakery|coffee|tea|clothes|shoes|chemist|books|mall|pastry|greengrocer"](around:900,${center.lat},${center.lng});
       nwr["amenity"~"cafe|restaurant|fast_food|food_court|ice_cream|bar|hospital|clinic|doctors|dentist|pharmacy"](around:900,${center.lat},${center.lng});
-      nwr["name"~"7-ELEVEN|7-11|全家|美廉社|全聯|萊爾富|OK超商|康是美|屈臣氏|寶雅|蝦皮|星巴克|路易莎|50嵐|可不可|清心|麻古|茶湯會|迷客夏|飲料|甜點"](around:900,${center.lat},${center.lng});
+      nwr["name"~"7-ELEVEN|7-Eleven|7-11|統一超商|全家|FamilyMart|美廉社|Simple Mart|全聯|萊爾富|OK超商|康是美|屈臣氏|寶雅|蝦皮|星巴克|路易莎"](around:900,${center.lat},${center.lng});
       nwr["leisure"="park"](around:900,${center.lat},${center.lng});
     );
     out center 140;
@@ -1911,22 +1907,10 @@ async function searchAddressOnMap(q) {
       });
       return;
     }
-
-    // OSM Nominatim - fallback to street if house number fails
-    const fetchGeo = async (query) => {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-        return await res.json();
-    };
-
-    let data = await fetchGeo(q + ' 台灣');
-    if (!data || data.length === 0) {
-        // Remove specific numbers and try again for Taiwan addresses (e.g. 301號 -> 移除)
-        const fallbackQuery = q.replace(/\d+(巷|弄|號|樓)/g, '').trim();
-        if (fallbackQuery !== q) {
-            data = await fetchGeo(fallbackQuery + ' 台灣');
-        }
-    }
-
+    
+    // OSM Nominatim
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ' 台灣')}`);
+    const data = await res.json();
     if (data && data.length > 0) {
       const lat = parseFloat(data[0].lat);
       const lng = parseFloat(data[0].lon);
@@ -1934,7 +1918,7 @@ async function searchAddressOnMap(q) {
       S.userPos = { lat, lng };
       searchNearbyRealPlaces(true);
     } else {
-      toast('⚠️ 找不到該地點，請嘗試輸入附近的大地標或路段');
+      toast('⚠️ 找不到該地點，請嘗試輸入更完整的地址');
     }
   } catch (e) {
     toast('⚠️ 搜尋發生錯誤');
@@ -2049,28 +2033,86 @@ function toggleTask(i) {
 
 function renderFullShop() {
   const el = document.getElementById('full-shop-list');
+  const statsEl = document.getElementById('expense-stats-container');
+  
+  if(!statsEl) return; // safety check
+  
   document.getElementById('shop-card-count').textContent = S.shopping.length + ' 筆';
+  
+  const now = new Date();
+  let y = now.getFullYear(), m = now.getMonth();
+  // 10號為結算基準
+  if (now.getDate() < 10) { m -= 1; if (m < 0) { m = 11; y -= 1; } }
+  let ey = y, em = m + 1;
+  if (em > 11) { em = 0; ey += 1; }
+  
+  const startStr = `${y}-${String(m+1).padStart(2,'0')}-10`;
+  const endStr = `${ey}-${String(em+1).padStart(2,'0')}-09`;
+  
+  let total = 0;
+  let cats = {};
+  
   if (!S.shopping.length) {
     el.innerHTML = '<div class="empty" style="padding:16px 0">尚無記帳紀錄</div>';
+    statsEl.innerHTML = '';
     return;
   }
-  el.innerHTML = S.shopping.map((s, i) => `
-    <div class="expense-item cat-${s.cat || '其他'}" style="${s.done ? 'opacity:0.6;filter:grayscale(1)' : ''}">
+  
+  el.innerHTML = S.shopping.map((s, i) => {
+    // 記帳加總：只要日期在區間內就計算 (不論買了沒)
+    if (s.date >= startStr && s.date <= endStr) {
+      total += (Number(s.amt) || 0);
+      cats[s.cat || '其他'] = (cats[s.cat || '其他'] || 0) + (Number(s.amt) || 0);
+    }
+    
+    // 背景與文字顏色套用
+    const bg = (s.bgColor && s.bgColor !== '#ffffff') ? s.bgColor : '';
+    const titleCol = (s.titleColor && s.titleColor !== '#263633') ? s.titleColor : '';
+    const defaultStyle = bg ? `background:${bg};border-color:${bg};` : '';
+    
+    return `
+    <div class="expense-item cat-${s.cat || '其他'}" style="${s.done ? 'opacity:0.6;filter:grayscale(1);'+defaultStyle : defaultStyle}">
       <div class="expense-info" style="display:flex;align-items:center;gap:10px">
         <button class="todo-check" style="${s.done ? 'background:#888;border-color:#888' : 'border-color:currentcolor;color:currentcolor'}" onclick="toggleShop(${i})">${s.done ? '✓' : ''}</button>
         <div>
-          <strong style="${s.done ? 'text-decoration:line-through' : ''}">${esc(s.title)}</strong>
+          <strong style="${s.done ? 'text-decoration:line-through;' : ''}${titleCol ? 'color:'+titleCol : ''}">${esc(s.title)}</strong>
           <small>${esc(s.store || '未指定商店')} · ${s.date||''} ${s.time||''}</small>
         </div>
       </div>
       <div style="display:flex;align-items:center;">
         <span class="expense-amt">$${s.amt || 0}</span>
-        <button class="task-btn" onclick="openExpenseModal(${s.id})" style="background:#ffffffaa">編輯</button>
+        <button class="task-btn" onclick="openExpenseModal(${s.id})" style="background:#ffffffaa;color:#333;">編輯</button>
       </div>
     </div>
-  `).join('');
-}
+  `}).join('');
+  
+  // 即時進度與預算設定
+  const budget = 20000; // 預設每月預算
+  const percent = Math.min((total / budget) * 100, 100).toFixed(1);
+  const isOver = total > budget;
 
+  statsEl.innerHTML = `
+    <div style="background:#fff;padding:20px;border-radius:16px;margin-bottom:16px;border:1px solid var(--line);box-shadow:var(--shadow-sm)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:12px;">
+        <div>
+          <h3 style="margin:0 0 4px;font-size:13px;color:#78867f">📊 本期記帳 (${m+1}/10 - ${em+1}/9)</h3>
+          <div style="font-size:32px;font-weight:800;color:${isOver ? '#ef4444' : 'var(--ink)'};letter-spacing:-1px;line-height:1">$${total}</div>
+        </div>
+        <div style="text-align:right;font-size:11px;color:#9aa59f">
+          預算進度 ${percent}%
+        </div>
+      </div>
+      
+      <div style="height:8px;background:#f0f3f1;border-radius:10px;overflow:hidden;margin-bottom:16px;">
+        <div style="height:100%;background:${isOver ? '#ef4444' : 'var(--sage)'};width:${percent}%;transition:width 0.5s ease;"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).map(k => `<span style="font-size:11px;background:#f9fbf9;padding:6px 12px;border-radius:20px;font-weight:600;color:#55645d;border:1px solid #edf1ee">${k}: $${cats[k]}</span>`).join('')}
+      </div>
+    </div>
+  `;
+}
 function openExpenseModal(id = null) {
   editExpId = typeof id === 'number' ? id : null;
   if (editExpId) {
