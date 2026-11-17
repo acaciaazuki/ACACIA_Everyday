@@ -19,36 +19,43 @@
 
     // 非同步函數：負責載入與初始化地圖
     async function initMap() {
-      // 動態載入核心地圖與標記功能
-      const { Map } = await google.maps.importLibrary("maps");
-      const { Marker } = await google.maps.importLibrary("marker");
+      try {
+        // Marker 不會隨 maps library 一起載入，必須明確載入 marker library。
+        const [{ Map }, { Marker }] = await Promise.all([
+          google.maps.importLibrary("maps"),
+          google.maps.importLibrary("marker")
+        ]);
 
       // 1. 初始化地圖 (預設中心點設為台北 101)
+      const center = { lat: 25.033964, lng: 121.564468 };
       map = new Map(document.getElementById("map"), {
-        center: { lat: 25.033964, lng: 121.564468 },
+        center,
         zoom: 15,
         disableDefaultUI: true, // 關閉預設的 Google 縮放控制與按鈕，方便您疊加自己的 UI
       });
 
       // 2. 建立一個自訂地點標記 (模擬您的書籤或咖啡廳地標)
       const customMarker = new Marker({
-        position: { lat: 25.033964, lng: 121.564468 },
-        map: map,
+        position: center,
+        map,
         title: "測試咖啡廳",
-        // 之後您可以把這裡換成您準備好的插畫圖示路徑：
-        // icon: "./assets/icons/coffee-icon.png" 
       });
 
       // 3. 加入點擊互動
       customMarker.addListener("click", () => {
         alert("成功點擊標記！這裡未來會彈出您的編輯與筆記視窗。");
       });
+      } catch (error) {
+        console.error("Google 地圖初始化失敗:", error);
+        document.getElementById("map").textContent =
+          "地圖載入失敗，請確認 API 金鑰、Maps JavaScript API 與 Marker library 已啟用。";
+      }
     }
   </script>
 
   <!-- 載入 Google Maps API 腳本 -->
-  <!-- 請將 YOUR_API_KEY_HERE 替換為您剛剛複製的金鑰 -->
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB25jh4am59P5uuvGFxoL3DTIIeiiMSyM0&callback=initMap"></script>
+  <!-- 請在部署環境注入有效的 Google Maps API 金鑰，不要將金鑰提交至儲存庫。 -->
+  <script async src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&loading=async&callback=initMap"></script>
 
 </body>
 </html>
