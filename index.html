@@ -335,7 +335,7 @@ button{cursor:pointer;color:inherit;background:none}
   </nav>
   <div class="nav-label" style="margin-top:16px">收集與整理</div>
   <nav class="nav">
-    <button data-v="tasks" id="nav-shopping"><span class="ico">🛒</span>購物清單</button>
+    <button data-v="shopping" id="nav-shopping"><span class="ico">🛒</span>購物清單</button>
   </nav>
   <div class="sidebar-bottom">
     <div class="profile">
@@ -475,7 +475,7 @@ button{cursor:pointer;color:inherit;background:none}
         <div id="real-map-container"></div>
 
         <div class="map-searchbar">
-          ⌕ <input id="map-search-input" placeholder="搜尋 7-11、美廉社、咖啡、餐廳或路名…" oninput="filterPlaces(this.value)">
+          ⌕ <input id="map-search-input" placeholder="搜尋 7-11、美廉社、咖啡、餐廳或路名…" oninput="filterPlaces(this.value)" onkeydown="if(event.key==='Enter') searchAddressOnMap(this.value)">
           <button onclick="openAddPlaceModal()" title="在目前地圖中心新增地標">＋地標</button>
         </div>
         <div class="map-filters" id="map-filters"></div>
@@ -536,8 +536,21 @@ button{cursor:pointer;color:inherit;background:none}
         <div id="full-task-list"></div>
       </div>
       
+    </div>
+  </section>
+
+  <!-- ═══ SHOPPING ═══ -->
+  <section class="view" id="shopping">
+    <div class="page-head">
+      <div>
+        <p class="eyebrow">每月10日至次月10日結算</p>
+        <h1>購物清單 & 記帳本</h1>
+      </div>
+    </div>
+    <div id="expense-stats-container"></div>
+    <div class="task-grid" style="grid-template-columns: 1fr;">
       <div class="card task-card">
-        <div class="card-head"><h3>🛒 購物與記帳清單</h3><span id="shop-card-count"></span></div>
+        <div class="card-head"><h3>🛒 記帳清單</h3><span id="shop-card-count"></span></div>
         <div class="head-actions" style="margin-bottom:12px">
           <button class="pill-btn" onclick="openExpenseModal()">＋ 新增記帳</button>
         </div>
@@ -545,6 +558,7 @@ button{cursor:pointer;color:inherit;background:none}
       </div>
     </div>
   </section>
+
 </main>
 </div>
 
@@ -558,7 +572,10 @@ button{cursor:pointer;color:inherit;background:none}
       <div class="field"><label>日期</label><input type="date" id="todo-date"></div>
       <div class="field"><label>時間</label><input type="time" id="todo-time"></div>
     </div>
-    <div class="modal-foot">
+    
+    <div class="field"><label>🖊️ 標題文字顏色</label><div class="swatches" id="todo-title-swatches"></div></div>
+    <div class="field"><label>🎨 卡片背景色</label><div class="swatches" id="todo-bg-swatches"></div></div>
+<div class="modal-foot">
       <button class="danger-btn" id="todo-del-btn" style="display:none;margin-right:auto" onclick="deleteEditingTodo()">🗑️ 刪除</button>
       <button class="ghost-btn" onclick="closeTodoModal()">取消</button>
       <button class="primary-btn" onclick="saveTodo()">儲存待辦</button>
@@ -594,7 +611,10 @@ button{cursor:pointer;color:inherit;background:none}
         </div>
       </div>
     </div>
-    <div class="modal-foot">
+    
+    <div class="field"><label>🖊️ 標題文字顏色</label><div class="swatches" id="exp-title-swatches"></div></div>
+    <div class="field"><label>🎨 卡片背景色</label><div class="swatches" id="exp-bg-swatches"></div></div>
+<div class="modal-foot">
       <button class="danger-btn" id="exp-del-btn" style="display:none;margin-right:auto" onclick="deleteEditingExpense()">🗑️ 刪除</button>
       <button class="ghost-btn" onclick="closeExpenseModal()">取消</button>
       <button class="primary-btn" onclick="saveExpense()">儲存記帳</button>
@@ -787,6 +807,10 @@ const S = {
   editEvId: null,
   evTitleColor: '#263633',
   evBgColor: '#eaf6ef',
+  todoTitleColor: '#263633',
+  todoBgColor: '#ffffff',
+  expTitleColor: '#263633',
+  expBgColor: '#ffffff',
   mapCat: '全部',
   favOnly: false,
   selectedPlaceId: 101,
@@ -797,7 +821,7 @@ const S = {
 const TITLE_COLORS = ['#263633','#55645d','#ef4444','#f97316','#d97706','#15803d','#1d4ed8','#7e22ce','#be185d','#ffffff'];
 const BG_COLORS = ['#eaf6ef','#fff4f1','#f0f4fb','#fff8e8','#f3edfa','#fef2f2','#91a6cf','#e6a18e','#77b494'];
 
-const crumbNames = {today:'今天',calendar:'行事曆',map:'探索地圖',tasks:'稍後辦'};
+const crumbNames = {today:'今天',calendar:'行事曆',map:'探索地圖',tasks:'稍後辦',shopping:'購物清單'};
 document.querySelectorAll('[data-v]').forEach(b => b.addEventListener('click', () => showView(b.dataset.v)));
 
 function showView(id) {
@@ -813,7 +837,8 @@ function showView(id) {
       renderMapUI();
     }, 120);
   }
-  if (id === 'tasks') { renderFullTasks(); renderFullShop(); }
+  if (id === 'tasks') { renderFullTasks(); }
+  if (id === 'shopping') { renderFullShop(); }
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
@@ -911,7 +936,7 @@ function renderSidebarTasks() {
     el.innerHTML = '<div class="empty" style="padding:12px 0">尚無待辦</div>';
     return;
   }
-  el.innerHTML = items.map((t, i) => `<div class="todo-item${t.done ? ' done' : ''}"><button class="todo-check" onclick="toggleTask(${i})">${t.done ? '✓' : ''}</button><span class="todo-text">${esc(t.title)}</span><span class="todo-meta">${esc(t.tag || '')}</span></div>`).join('');
+  el.innerHTML = items.map((t, i) => `<div class="todo-item${t.done ? ' done' : ''}" style="background:${t.bgColor||'transparent'}"><button class="todo-check" onclick="toggleTask(${i})">${t.done ? '✓' : ''}</button><span class="todo-text" style="color:${t.titleColor||'inherit'}">${esc(t.title)}</span><span class="todo-meta">${esc(t.tag || '')}</span></div>`).join('');
 }
 function toggleQuickTask(open) {
   const row = document.getElementById('quick-task-row');
@@ -940,6 +965,49 @@ function getSelectedDateISO() {
   const m = String(S.calMonth + 1).padStart(2, '0');
   const d = String(S.calSelDay).padStart(2, '0');
   return `${S.calYear}-${m}-${d}`;
+}
+
+
+function buildGenericSwatches(titleContainerId, bgContainerId, stateKeyPrefix) {
+  const tc = document.getElementById(titleContainerId);
+  tc.innerHTML = '';
+  TITLE_COLORS.forEach(hex => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'swatch' + (S[stateKeyPrefix+'TitleColor'] === hex ? ' selected' : '');
+    b.style.cssText = `background:${hex};${hex === '#ffffff' ? 'border:1.5px solid #d5ddd8' : ''}`;
+    b.onclick = () => {
+      tc.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+      S[stateKeyPrefix+'TitleColor'] = hex;
+    };
+    tc.appendChild(b);
+  });
+
+  const bc = document.getElementById(bgContainerId);
+  bc.innerHTML = '';
+  BG_COLORS.forEach(hex => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'swatch' + (S[stateKeyPrefix+'BgColor'] === hex ? ' selected' : '');
+    b.style.background = hex;
+    b.onclick = () => {
+      bc.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+      S[stateKeyPrefix+'BgColor'] = hex;
+    };
+    bc.appendChild(b);
+  });
+
+  const cust = document.createElement('div');
+  cust.className = 'swatch-custom';
+  cust.title = '自訂背景顏色';
+  cust.innerHTML = `<input type="color" value="${S[stateKeyPrefix+'BgColor'] || '#ffffff'}">`;
+  cust.querySelector('input').oninput = e => {
+    S[stateKeyPrefix+'BgColor'] = e.target.value;
+    bc.querySelectorAll('.swatch').forEach(x => x.classList.remove('selected'));
+  };
+  bc.appendChild(cust);
 }
 
 function buildEvSwatches() {
@@ -1819,6 +1887,44 @@ function filterByCat(cat) {
   renderMapUI();
 }
 
+
+async function searchAddressOnMap(q) {
+  q = q.trim();
+  if (!q) return;
+  toast('🔍 正在搜尋路名或地址...');
+  try {
+    if (mapMode === 'google' && window.google) {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: q + ' 台灣' }, (results, status) => {
+        if (status === 'OK') {
+          const loc = results[0].geometry.location;
+          gMap.panTo(loc);
+          S.userPos = { lat: loc.lat(), lng: loc.lng() };
+          searchNearbyRealPlaces(true);
+        } else {
+          toast('⚠️ 找不到該地點，請嘗試輸入更完整的地址');
+        }
+      });
+      return;
+    }
+    
+    // OSM Nominatim
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + ' 台灣')}`);
+    const data = await res.json();
+    if (data && data.length > 0) {
+      const lat = parseFloat(data[0].lat);
+      const lng = parseFloat(data[0].lon);
+      if (mapMode === 'leaflet' && leafletMap) leafletMap.panTo([lat, lng]);
+      S.userPos = { lat, lng };
+      searchNearbyRealPlaces(true);
+    } else {
+      toast('⚠️ 找不到該地點，請嘗試輸入更完整的地址');
+    }
+  } catch (e) {
+    toast('⚠️ 搜尋發生錯誤');
+  }
+}
+
 function filterPlaces() {
   renderMapUI();
 }
@@ -1853,10 +1959,10 @@ function renderFullTasks() {
     return;
   }
   el.innerHTML = S.tasks.map((t, i) => `
-    <div class="task-row${t.done ? ' done' : ''}">
+    <div class="task-row${t.done ? ' done' : ''}" style="background:${t.bgColor||'#fff'}; border:1px solid ${t.bgColor&&t.bgColor!=='#ffffff'&&t.bgColor!=='#fff'?t.bgColor:'transparent'}">
       <button class="todo-check" onclick="toggleTask(${i})">${t.done ? '✓' : ''}</button>
       <div class="task-main">
-        <span class="task-title">${esc(t.title)}</span>
+        <span class="task-title" style="color:${t.titleColor||'var(--ink)'}">${esc(t.title)}</span>
         <span class="task-sub">${t.loc ? '📍 '+esc(t.loc)+' · ' : ''}${esc(t.date||'')} ${esc(t.time||'')}</span>
       </div>
       <div class="task-btns">
@@ -1875,6 +1981,8 @@ function openTodoModal(id = null) {
     document.getElementById('todo-date').value = t.date || '';
     document.getElementById('todo-time').value = t.time || '';
     document.getElementById('todo-modal-title').textContent = '編輯待辦事項';
+    S.todoTitleColor = t.titleColor || '#263633';
+    S.todoBgColor = t.bgColor || '#ffffff';
     document.getElementById('todo-del-btn').style.display = 'block';
   } else {
     document.getElementById('todo-title').value = '';
@@ -1882,8 +1990,11 @@ function openTodoModal(id = null) {
     document.getElementById('todo-date').value = toLocalISO();
     document.getElementById('todo-time').value = '12:00';
     document.getElementById('todo-modal-title').textContent = '新增待辦事項';
+    S.todoTitleColor = '#263633';
+    S.todoBgColor = '#ffffff';
     document.getElementById('todo-del-btn').style.display = 'none';
   }
+  buildGenericSwatches('todo-title-swatches', 'todo-bg-swatches', 'todo');
   document.getElementById('todo-modal').classList.add('open');
 }
 
@@ -1896,7 +2007,9 @@ function saveTodo() {
     title,
     loc: document.getElementById('todo-loc').value.trim(),
     date: document.getElementById('todo-date').value,
-    time: document.getElementById('todo-time').value
+    time: document.getElementById('todo-time').value,
+    titleColor: S.todoTitleColor,
+    bgColor: S.todoBgColor
   };
   if (editTodoId) {
     const t = S.tasks.find(x => x.id === editTodoId);
@@ -1953,6 +2066,8 @@ function openExpenseModal(id = null) {
     document.getElementById('exp-date').value = s.date || '';
     document.getElementById('exp-time').value = s.time || '';
     document.getElementById('expense-modal-title').textContent = '編輯記帳';
+    S.expTitleColor = s.titleColor || '#263633';
+    S.expBgColor = s.bgColor || '#ffffff';
     document.getElementById('exp-del-btn').style.display = 'block';
   } else {
     document.getElementById('exp-title').value = '';
@@ -1962,8 +2077,11 @@ function openExpenseModal(id = null) {
     document.getElementById('exp-date').value = toLocalISO();
     document.getElementById('exp-time').value = '12:00';
     document.getElementById('expense-modal-title').textContent = '新增購物記帳';
+    S.expTitleColor = '#263633';
+    S.expBgColor = '#ffffff';
     document.getElementById('exp-del-btn').style.display = 'none';
   }
+  buildGenericSwatches('exp-title-swatches', 'exp-bg-swatches', 'exp');
   document.getElementById('expense-modal').classList.add('open');
 }
 
@@ -1978,7 +2096,9 @@ function saveExpense() {
     store: document.getElementById('exp-store').value.trim(),
     cat: document.getElementById('exp-cat').value,
     date: document.getElementById('exp-date').value,
-    time: document.getElementById('exp-time').value
+    time: document.getElementById('exp-time').value,
+    titleColor: S.expTitleColor,
+    bgColor: S.expBgColor
   };
   if (editExpId) {
     const s = S.shopping.find(x => x.id === editExpId);
