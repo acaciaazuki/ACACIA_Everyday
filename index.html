@@ -199,18 +199,16 @@ button{cursor:pointer;color:inherit;background:none}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:#263f34;color:#fff;border-radius:var(--radius-sm);padding:10px 18px;font-size:12px;font-weight:500;opacity:0;transition:.3s;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .empty{text-align:center;color:#a5b0aa;font-size:12px;padding:28px 0;line-height:1.6}
-/* 新版 PlaceAutocompleteElement 樣式調整 */
-gmp-place-autocomplete {
-  width: 100%;
-  display: block;
-  border: 1px solid #e9efeb;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  background: #fff;
-  --gmp-mat-color-surface: #ffffff;
-  --gmp-mat-color-on-surface: #263633;
-  --gmp-mat-color-primary: #4a987b;
-}
+/* 內嵌式地點搜尋建議選單 */
+.place-search-row{display:flex;gap:8px;align-items:center}
+.place-search-row input{flex:1}
+.place-search-results{display:none;flex-direction:column;border:1px solid #d5e2db;border-radius:var(--radius-sm);background:#fff;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px #29483a14}
+.place-search-results.open{display:flex}
+.place-search-item{padding:10px 12px;border-bottom:1px solid #f2f5f3;cursor:pointer;text-align:left;transition:var(--tr)}
+.place-search-item:last-child{border-bottom:none}
+.place-search-item:hover{background:var(--sage-light)}
+.place-search-item strong{display:block;font-size:12px;color:var(--ink)}
+.place-search-item small{display:block;font-size:10px;color:#8a9893;margin-top:2px}
 @media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.toast{bottom:76px}}
 </style>
@@ -543,10 +541,12 @@ gmp-place-autocomplete {
   <div class="modal">
     <div class="modal-head"><h2>📍 收藏地點</h2><button class="close-btn" onclick="closeAddPlaceModal()">×</button></div>
     <div class="field" id="np-search-wrap">
-      <label>🔍 搜尋地點 (輸入並點選下拉清單，自動依類型帶入營業、公休與推薦美食)</label>
-      <div id="place-autocomplete-container" style="background:#fff; border-radius:var(--radius-sm);">
-        <input id="np-search-fallback" placeholder="請先設定 Google API 金鑰以啟用自動搜尋..." disabled style="width:100%;border:1px solid #e9efeb;border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;background:#f9fbf9;">
+      <label>🔍 搜尋地點 (輸入後按 Enter 或點「搜尋」，點選下方結果自動帶入資訊)</label>
+      <div class="place-search-row">
+        <input id="np-search-input" placeholder="例如：晴明身心診所、春水堂 創始店..." oninput="debouncedSearchPlace()" onkeydown="if(event.key==='Enter'){event.preventDefault();searchPlaceNow();}">
+        <button type="button" class="primary-btn" style="padding:9px 14px;white-space:nowrap;" onclick="searchPlaceNow()">搜尋</button>
       </div>
+      <div class="place-search-results" id="np-search-results"></div>
     </div>
     <div class="field"><label>地點名稱 *</label><input id="np-name" placeholder="例如：春水堂 創始店"></div>
     <div class="field"><label>詳細地址</label><input id="np-address" placeholder="地點的完整地址"></div>
@@ -728,16 +728,15 @@ function toLocalISO(d = new Date()) { const y = d.getFullYear(); const m = Strin
 const PLACE_CATS = { '餐廳': { icon: '🍝', bg: '#fff8e7' }, '甜點': { icon: '🍰', bg: '#fdf4ff' }, '咖啡': { icon: '☕', bg: '#f6e7d8' }, '飲料店': { icon: '🧋', bg: '#e0f2fe' }, '診所': { icon: '🏥', bg: '#ebf4ff' }, '便利商店': { icon: '🏪', bg: '#e8f7f0' }, '書局': { icon: '📚', bg: '#fef3c7' }, '服飾': { icon: '👗', bg: '#fff0f3' }, '公園': { icon: '🌳', bg: '#edf5eb' }, '景點': { icon: '🎡', bg: '#ffedd5' }, '學校': { icon: '🏫', bg: '#f3e8ff' }, '市場': { icon: '🧺', bg: '#ffedd5' }, '其他': { icon: '📍', bg: '#f3f4f6' } };
 const DEFAULT_PLACES = [ {id:101, name:'小日子手沖咖啡', cat:'咖啡', address:'台中市西屯區逢甲路', hours:'🚫 公休時間：星期一\n星期一: 休息\n星期二: 10:00–18:00', note:'平日下午去很適合帶筆電工作', url:''} ];
 
-// 純新版 Google Places API (New) 載入與初始化
 function initPlacesEngine() {
   const btn = document.getElementById('gmap-status-btn');
   if (S.gmapKey) {
     btn.textContent = '🔑 Google API (自動抓取已啟用)'; btn.classList.add('active');
     if (!window.google || !window.google.maps) {
       const s = document.createElement('script');
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&v=weekly&language=zh-TW&region=TW&callback=setupAutocomplete`;
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&v=weekly&language=zh-TW&region=TW`;
       s.async = true; s.onerror = () => toast('無法載入 Google Maps API，請檢查金鑰'); document.head.appendChild(s);
-    } else { setupAutocomplete(); }
+    }
   } else { btn.textContent = '🔑 設定 Google API (啟用自動抓取)'; btn.classList.remove('active'); }
 }
 
@@ -749,7 +748,6 @@ function saveGmapKey() {
 }
 function clearGmapKey() { localStorage.removeItem('bb3_gmap_key'); S.gmapKey = ''; save(); closeGmapKeyModal(); toast('已切換為純手動輸入模式'); setTimeout(() => location.reload(), 400); }
 
-// 根據地點的 Google types 與名稱智慧判斷分類
 function detectPlaceCategory(name = '', types = []) {
   const n = name.toLowerCase();
   const t = types.map(x => x.toLowerCase());
@@ -793,7 +791,6 @@ function detectPlaceCategory(name = '', types = []) {
   return '其他';
 }
 
-// 整理營業時間，並自動萃取「公休時間」置頂顯示
 function formatOpeningHours(weekdayArr = []) {
   if (!weekdayArr || !weekdayArr.length) return '查無營業時間資訊';
   const closedDays = [];
@@ -809,7 +806,6 @@ function formatOpeningHours(weekdayArr = []) {
   return closedHeader + weekdayArr.join('\n');
 }
 
-// 依據地點分類自動組合「推薦美食 / 診所看診提醒 / 專屬筆記」
 function buildCategoryNote({ cat, rating, userRatingsTotal, phone, editorial, reviews = [] }) {
   const lines = [];
   const foodCats = ['餐廳', '甜點', '咖啡', '飲料店', '市場'];
@@ -849,98 +845,120 @@ function buildCategoryNote({ cat, rating, userRatingsTotal, phone, editorial, re
   return lines.join('\n');
 }
 
-// 將抓取到的地點資料填入表單
-function populatePlaceFields(data) {
-  document.getElementById('np-name').value = data.name || '';
-  document.getElementById('np-address').value = data.address || '';
-  document.getElementById('np-url').value = data.url || '';
+function populatePlaceFields(place) {
+  const name = place.displayName || '';
+  const address = place.formattedAddress || '';
+  const types = place.types || [];
+  const weekdayText = place.regularOpeningHours?.weekdayDescriptions || [];
+  const url = place.googleMapsURI || '';
+  const rating = place.rating;
+  const userRatingsTotal = place.userRatingCount;
+  const phone = place.nationalPhoneNumber || '';
+  const editorial = place.editorialSummary || '';
+  const reviews = place.reviews || [];
 
-  const guessedCat = detectPlaceCategory(data.name, data.types || []);
+  document.getElementById('np-name').value = name;
+  document.getElementById('np-address').value = address;
+  document.getElementById('np-url').value = url;
+
+  const guessedCat = detectPlaceCategory(name, types);
   document.getElementById('np-cat').value = guessedCat;
 
-  document.getElementById('np-hours').value = formatOpeningHours(data.weekdayText);
+  document.getElementById('np-hours').value = formatOpeningHours(weekdayText);
   document.getElementById('np-note').value = buildCategoryNote({
     cat: guessedCat,
-    rating: data.rating,
-    userRatingsTotal: data.userRatingsTotal,
-    phone: data.phone,
-    editorial: data.editorial,
-    reviews: data.reviews
+    rating,
+    userRatingsTotal,
+    phone,
+    editorial,
+    reviews
   });
 
+  document.getElementById('np-search-results').classList.remove('open');
   toast(`✅ 已自動帶入「${guessedCat}」營業、公休與詳細資訊！`);
 }
 
-// 純新版 Places API (New) 的 PlaceAutocompleteElement 初始化
-window.setupAutocomplete = async function() {
-  const container = document.getElementById('place-autocomplete-container');
-  if (!container || !window.google || !window.google.maps) return;
+// 主動呼叫新版 Place.searchByText API，徹底解決下拉選單被遮擋或事件未觸發問題
+let searchTimer = null;
+let currentSearchPlaces = [];
+
+function debouncedSearchPlace() {
+  clearTimeout(searchTimer);
+  const q = document.getElementById('np-search-input').value.trim();
+  const box = document.getElementById('np-search-results');
+  if (!q) {
+    box.classList.remove('open');
+    return;
+  }
+  searchTimer = setTimeout(() => searchPlaceNow(true), 600);
+}
+
+async function searchPlaceNow(isAutoSuggest = false) {
+  const q = document.getElementById('np-search-input').value.trim();
+  const box = document.getElementById('np-search-results');
+  if (!q) {
+    if (!isAutoSuggest) toast('請先輸入要搜尋的地點名稱');
+    return;
+  }
+  if (!S.gmapKey || !window.google || !window.google.maps) {
+    toast('請先點擊右上角 🔑 設定 Google Maps API 金鑰');
+    return;
+  }
 
   try {
-    // 動態載入新版 places 程式庫
-    const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
-    container.innerHTML = '';
-
-    const pacEl = new PlaceAutocompleteElement({
-      includedRegionCodes: ['tw']
-    });
-    pacEl.style.width = '100%';
-    container.appendChild(pacEl);
-
-    const handleNewPlace = async (place) => {
-      if (!place) return;
-      try {
-        await place.fetchFields({
-          fields: [
-            'displayName',
-            'formattedAddress',
-            'regularOpeningHours',
-            'types',
-            'googleMapsURI',
-            'rating',
-            'userRatingCount',
-            'nationalPhoneNumber',
-            'editorialSummary',
-            'reviews'
-          ]
-        });
-      } catch (err) {
-        // 若部分進階欄位因權限無法取得，自動降級抓基本欄位確保不中斷
-        await place.fetchFields({
-          fields: ['displayName', 'formattedAddress', 'regularOpeningHours', 'types', 'googleMapsURI']
-        });
-      }
-
-      populatePlaceFields({
-        name: place.displayName || '',
-        address: place.formattedAddress || '',
-        types: place.types || [],
-        weekdayText: place.regularOpeningHours?.weekdayDescriptions || [],
-        url: place.googleMapsURI || '',
-        rating: place.rating,
-        userRatingsTotal: place.userRatingCount,
-        phone: place.nationalPhoneNumber || '',
-        editorial: place.editorialSummary || '',
-        reviews: place.reviews || []
-      });
+    const { Place } = await google.maps.importLibrary('places');
+    const request = {
+      textQuery: q,
+      fields: [
+        'displayName',
+        'formattedAddress',
+        'regularOpeningHours',
+        'types',
+        'googleMapsURI',
+        'rating',
+        'userRatingCount',
+        'nationalPhoneNumber',
+        'editorialSummary',
+        'reviews'
+      ],
+      language: 'zh-TW',
+      region: 'tw',
+      maxResultCount: 5
     };
 
-    // 監聽新版官方 gmp-select 事件 (取代舊版 gmp-placeselect)
-    pacEl.addEventListener('gmp-select', async (e) => {
-      const place = e.placePrediction ? e.placePrediction.toPlace() : e.place;
-      await handleNewPlace(place);
-    });
+    const { places } = await Place.searchByText(request);
+    currentSearchPlaces = places || [];
 
-    // 相容舊版事件名稱以防萬一
-    pacEl.addEventListener('gmp-placeselect', async (e) => {
-      await handleNewPlace(e.place);
-    });
+    if (!currentSearchPlaces.length) {
+      box.innerHTML = `<div class="place-search-item"><small>找不到「${esc(q)}」的相關地點，請試著加上縣市或路名</small></div>`;
+      box.classList.add('open');
+      return;
+    }
+
+    // 如果使用者是按 Enter 或按「搜尋」鈕，且只有一筆最精準結果，直接幫他帶入；否則顯示清單讓他點選
+    if (!isAutoSuggest && currentSearchPlaces.length === 1) {
+      populatePlaceFields(currentSearchPlaces[0]);
+      return;
+    }
+
+    box.innerHTML = currentSearchPlaces.map((p, idx) => `
+      <button type="button" class="place-search-item" onclick="selectSearchedPlace(${idx})">
+        <strong>${esc(p.displayName || '未命名地點')}</strong>
+        <small>${esc(p.formattedAddress || '')}</small>
+      </button>
+    `).join('');
+    box.classList.add('open');
 
   } catch (err) {
-    console.error('Places API (New) 載入錯誤:', err);
-    toast('Places API (New) 初始化失敗，請確認 API 金鑰設定');
+    console.error('Place.searchByText 錯誤:', err);
+    toast('搜尋失敗：請確認 Google Cloud 已啟用 Places API (New) 且金鑰無誤');
   }
-};
+}
+
+function selectSearchedPlace(idx) {
+  const place = currentSearchPlaces[idx];
+  if (place) populatePlaceFields(place);
+}
 
 function renderPlacesUI() {
   const fc = document.getElementById('place-filters'); const cats = ['全部', ...Object.keys(PLACE_CATS)];
@@ -979,6 +997,8 @@ function renderPlacesUI() {
 function filterByCat(cat) { S.mapCat = cat; renderPlacesUI(); }
 
 function openAddPlaceModal(id = null) {
+  const resBox = document.getElementById('np-search-results');
+  if (resBox) { resBox.innerHTML = ''; resBox.classList.remove('open'); }
   if (typeof id === 'number') {
     const p = S.places.find(x => x.id === id); if(!p) return;
     S.selectedPlaceId = id; document.getElementById('np-search-wrap').style.display = 'none';
@@ -988,8 +1008,7 @@ function openAddPlaceModal(id = null) {
     S.npBgColor = p.bgColor || '#ffffff';
   } else {
     S.selectedPlaceId = null; document.getElementById('np-search-wrap').style.display = 'grid';
-    if(window.google && window.google.maps) setupAutocomplete();
-    
+    document.getElementById('np-search-input').value = '';
     document.getElementById('np-name').value = '';
     document.getElementById('np-address').value = ''; document.getElementById('np-cat').value = '餐廳';
     document.getElementById('np-hours').value = ''; document.getElementById('np-note').value = ''; document.getElementById('np-url').value = '';
