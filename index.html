@@ -219,7 +219,7 @@ button{cursor:pointer;color:inherit;background:none}
   <div class="brand"><span class="brandmark">✿</span>ACACIA<span style="color:var(--sage);font-weight:400">+</span></div>
   <div class="nav-label">我的一天</div>
   <nav class="nav">
-    <button class="active" data-v="today"><span class="ico">◷</span>今天</button>
+    <button class="active" data-v="today"><span class="ico">◷</span>今天 Today</button>
     <button data-v="calendar"><span class="ico">▦</span>行事曆</button>
     <button data-v="places"><span class="ico">📍</span>最愛地點</button>
     <button data-v="tasks"><span class="ico">☑</span>稍後辦<span class="count" id="task-count">0</span></button>
@@ -231,7 +231,7 @@ button{cursor:pointer;color:inherit;background:none}
   <div class="sidebar-bottom">
     <div class="profile">
       <div class="avatar">🐻</div>
-      <div class="profile-info"><strong>早安！</strong><small>讓今天留一點空白 🌱</small></div>
+      <div class="profile-info"><strong>Hi～</strong><small>讓今天留一點空白 🌱</small></div>
     </div>
   </div>
 </aside>
@@ -266,7 +266,7 @@ button{cursor:pointer;color:inherit;background:none}
     </div>
     <div class="welcome-banner">
       <div>
-        <h2>今天也慢慢來，一切都會剛剛好。</h2>
+        <h2>慢慢來，一切都會剛剛好。</h2>
         <p>你有幾件重要的事，還有足夠的空檔好好呼吸。</p>
         <div class="welcome-stats">
           <span class="wstat"><b id="ws-events">0</b>個行程</span>
@@ -543,7 +543,7 @@ button{cursor:pointer;color:inherit;background:none}
     <div class="field" id="np-search-wrap">
       <label>🔍 搜尋地點 (輸入後按 Enter 或點「搜尋」，點選下方結果自動帶入資訊)</label>
       <div class="place-search-row">
-        <input id="np-search-input" placeholder="例如：晴明身心診所、春水堂 創始店..." oninput="debouncedSearchPlace()" onkeydown="if(event.key==='Enter'){event.preventDefault();searchPlaceNow();}">
+        <input id="np-search-input" placeholder="例如：春水堂 創始店..." oninput="debouncedSearchPlace()" onkeydown="if(event.key==='Enter'){event.preventDefault();searchPlaceNow();}">
         <button type="button" class="primary-btn" style="padding:9px 14px;white-space:nowrap;" onclick="searchPlaceNow()">搜尋</button>
       </div>
       <div class="place-search-results" id="np-search-results"></div>
@@ -818,7 +818,7 @@ function buildCategoryNote({ cat, rating, userRatingsTotal, phone, editorial, re
   }
 
   if (cat === '診所') {
-    lines.push(`🏥 看診提醒：前往就診請記得攜帶健保卡，建議先查看上方門診與休診時間。`);
+    lines.push(`🏥 看診提醒：請攜帶健保卡，建議先查看上方門診與休診時間。`);
     if (editorial) lines.push(`ℹ️ 簡介：${editorial}`);
   } else if (foodCats.includes(cat)) {
     if (editorial) {
