@@ -121,67 +121,12 @@ button{cursor:pointer;color:inherit;background:none}
 .cal-ev{margin-top:4px;padding:3px 6px;border-radius:5px;font-size:10px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:var(--tr);border:1px solid #00000008}
 .cal-ev:hover{opacity:.85;transform:translateY(-1px)}
 .cal-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:13px;border-top:1px solid var(--line);font-size:11px;color:#839088}
-.map-layout{display:grid;grid-template-columns:1fr 350px;gap:16px}
-.mapbox{height:600px;position:relative;overflow:hidden;border-radius:16px;border:1px solid #dce6de;background:#edf2ee;user-select:none}
-#real-map-container{position:absolute;inset:0;width:100%;height:100%;z-index:1}
-.leaflet-control-attribution{font-size:9px!important;opacity:.6}
-.map-searchbar{position:absolute;z-index:5;left:16px;top:16px;width:min(360px,calc(100% - 76px));height:42px;border-radius:12px;background:white;box-shadow:0 4px 16px #3458421f;display:flex;align-items:center;padding:0 12px;gap:8px}
+.map-searchbar{position:relative;left:0;top:0;width:100%;max-width:400px;height:42px;border-radius:12px;background:white;box-shadow:var(--shadow-sm);display:flex;align-items:center;padding:0 12px;gap:8px;margin-bottom:16px}
 .map-searchbar input{border:0;width:100%;font-size:12px}
-.map-searchbar button{font-size:11px;background:var(--sage-light);color:var(--sage-dark);padding:5px 9px;border-radius:8px;font-weight:700;white-space:nowrap;transition:var(--tr)}
-.map-searchbar button:hover{background:var(--sage);color:#fff}
-.map-filters{position:absolute;z-index:5;top:66px;left:16px;display:flex;gap:5px;flex-wrap:wrap;max-width:calc(100% - 76px)}
-.map-filter{background:#fff;border-radius:20px;padding:6px 11px;font-size:10px;box-shadow:0 2px 8px #30493718;color:#69776f;font-weight:600;transition:var(--tr)}
+.map-filters{position:relative;top:0;left:0;margin-bottom:24px;display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;max-width:100%}
+.map-filter{background:#fff;border-radius:20px;padding:6px 11px;font-size:10px;box-shadow:0 2px 8px #30493718;color:#69776f;font-weight:600;transition:var(--tr);white-space:nowrap}
 .map-filter:hover{background:var(--sage-light)}
 .map-filter.on{background:var(--sage);color:white}
-.bldg-marker{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.bldg-marker:hover{transform:scale(1.12);z-index:999!important}
-.bldg-marker.active{transform:scale(1.18);z-index:1000!important}
-.bldg-card{position:relative;width:46px;height:46px;border-radius:14px;background:#fff;box-shadow:0 6px 16px #253d312e;border:2.5px solid #fff;display:grid;place-items:center;transition:var(--tr)}
-.bldg-marker.active .bldg-card{border-color:var(--sage);box-shadow:0 8px 22px #4a987b55;background:#f7fcf9}
-.bldg-card svg{width:32px;height:32px}
-.bldg-label{margin-top:3px;background:#ffffffeb;backdrop-filter:blur(4px);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;color:#2f403b;box-shadow:0 2px 6px #253d3120;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
-.bldg-marker.active .bldg-label{background:var(--sage);color:#fff}
-.bldg-fav{position:absolute;top:-5px;right:-5px;width:16px;height:16px;border-radius:50%;background:#ef4444;border:2px solid #fff;color:#fff;font-size:8px;display:grid;place-items:center;box-shadow:0 2px 4px #0002}
-.user-gps-wrap{display:grid;place-items:center;position:relative;width:44px;height:44px}
-.gps-pulse{position:absolute;width:44px;height:44px;border-radius:50%;background:#3b82f644;animation:gpsPulse 2s infinite}
-.gps-dot{width:16px;height:16px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 2px 8px #1d4ed888;z-index:1}
-@keyframes gpsPulse{0%{transform:scale(.5);opacity:.95}100%{transform:scale(1.6);opacity:0}}
-.map-controls{position:absolute;right:14px;top:16px;display:grid;gap:6px;z-index:5}
-.map-ctrl{width:36px;height:36px;border-radius:10px;background:#fff;box-shadow:0 3px 10px #344b3d1f;font-size:14px;font-weight:700;color:#718078;transition:var(--tr);display:grid;place-items:center}
-.map-ctrl:hover{background:var(--sage-light);color:var(--sage)}
-.map-ctrl.locating{animation:spin .8s linear infinite;color:var(--sage)}
-@keyframes spin{to{transform:rotate(360deg)}}
-.map-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:#ffffffeb;padding:6px 14px;border-radius:20px;color:#5c6b63;font-size:10px;font-weight:600;box-shadow:0 2px 10px #344b3d1c;white-space:nowrap;z-index:5;pointer-events:none}
-.map-loc-status{position:absolute;top:16px;right:58px;background:#fff;padding:7px 13px;border-radius:20px;font-size:11px;font-weight:600;box-shadow:var(--shadow-sm);z-index:5;display:none}
-.places-card{padding:16px;display:flex;flex-direction:column;max-height:600px;overflow:hidden}
-.places-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.places-head h3{font-size:13px;font-weight:700;margin:0}
-.places-head small{font-size:10px;color:#9aa59f}
-.place-list{overflow-y:auto;display:grid;gap:6px;flex:1;padding-right:2px;min-height:160px}
-.place-item{padding:9px 10px;border:1px solid #f0f3f1;border-radius:var(--radius-sm);display:flex;gap:10px;align-items:center;cursor:pointer;transition:var(--tr)}
-.place-item:hover,.place-item.chosen{background:#f5faf6;border-color:#b8dec6}
-.place-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
-.place-icon svg{width:24px;height:24px}
-.place-info{min-width:0;flex:1}
-.place-info strong{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.place-info small{font-size:10px;color:#9aa59f;display:flex;align-items:center;gap:5px}
-.heart-btn{color:#b1bbb5;font-size:16px;padding:4px;transition:var(--tr)}
-.heart-btn:hover{color:#e38b82}
-.heart-btn.saved{color:#ef4444}
-.place-detail{margin-top:10px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
-.detail-top{display:flex;align-items:center;justify-content:space-between;gap:6px}
-.detail-top h4{font-size:13px;font-weight:700;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.star-picker{display:flex;gap:2px;font-size:14px;cursor:pointer;flex-shrink:0}
-.star-picker span{color:#d5ddd8;transition:var(--tr)}
-.star-picker span.on{color:#f59e0b}
-.detail-meta-row{display:flex;gap:6px;align-items:center}
-.detail-meta-row select,.detail-meta-row input{font-size:11px;padding:5px 8px;border:1px solid #e2ebe5;border-radius:8px;background:#f9fbfa;color:var(--ink)}
-.detail-meta-row select{font-weight:600;color:var(--sage-dark)}
-.detail-meta-row input{flex:1;min-width:0}
-.detail-note-box{width:100%;border:1px solid #e2ebe5;border-radius:8px;padding:7px 9px;font-size:11px;color:var(--ink);background:#fcfefd;resize:none;height:52px;line-height:1.4;transition:var(--tr)}
-.detail-note-box:focus{border-color:var(--sage);background:#fff;box-shadow:0 0 0 2px var(--sage-light)}
-.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.detail-actions button{padding:8px 10px;font-size:11px;border-radius:8px;font-weight:700}
 .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .task-card{padding:20px}
 .task-card .card-head span{font-size:10px;color:#99a49e}
@@ -197,8 +142,6 @@ button{cursor:pointer;color:inherit;background:none}
 .task-row:hover .task-btns{opacity:1}
 .task-btn{background:#f6f8f6;border-radius:7px;padding:5px 8px;color:#89958f;font-size:10px;font-weight:600;transition:var(--tr)}
 .task-btn:hover{background:var(--sage-light);color:var(--sage-dark)}
-.task-btn.del:hover{background:#fef2f2;color:#ef4444}
-.task-edit-input{border:0;background:none;font-size:12px;font-weight:600;color:var(--ink);width:100%;outline:none}
 .expense-item { padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--line); transition: var(--tr); }
 .expense-item:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
 .cat-食 { background-color: #ffebee; color: #c62828; border-left: 4px solid #c62828; }
@@ -238,8 +181,6 @@ button{cursor:pointer;color:inherit;background:none}
 .swatch{height:26px;width:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:var(--tr);font-size:11px;display:grid;place-items:center}
 .swatch:hover{transform:scale(1.15)}
 .swatch.selected{outline:2px solid var(--sage);outline-offset:2px}
-.swatch-custom{width:26px;height:26px;border-radius:50%;overflow:hidden;border:1.5px solid #e5ece8;cursor:pointer;position:relative;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)}
-.swatch-custom input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .color-preview{padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;margin-bottom:14px;transition:var(--tr);min-height:38px;display:flex;align-items:center;border:1px solid #0000000a}
 .modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
 .ghost-btn{background:#f3f6f4;border-radius:var(--radius-sm);padding:10px 15px;color:#748179;font-size:12px;font-weight:600;transition:var(--tr)}
@@ -258,19 +199,20 @@ button{cursor:pointer;color:inherit;background:none}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:#263f34;color:#fff;border-radius:var(--radius-sm);padding:10px 18px;font-size:12px;font-weight:500;opacity:0;transition:.3s;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .empty{text-align:center;color:#a5b0aa;font-size:12px;padding:28px 0;line-height:1.6}
-.empty-icon{font-size:28px;margin-bottom:8px}
-.input-bar{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
-.input-bar input{flex:1;border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 12px;font-size:12px;transition:var(--tr)}
-.input-bar input:focus{border-color:var(--sage);box-shadow:0 0 0 3px var(--sage-light)}
-.input-bar button{width:32px;height:32px;border-radius:8px;background:var(--sage);color:white;font-size:14px;display:grid;place-items:center}
-/* 確保 Google Autocomplete 下拉選單浮在 Modal 最上層且美觀 */
-.pac-container{z-index:99999!important;border-radius:12px;border:1px solid var(--line);box-shadow:0 12px 36px #29483a1f;font-family:'DM Sans','Noto Sans TC',sans-serif;margin-top:4px;overflow:hidden}
-.pac-item{padding:8px 12px;font-size:12px;cursor:pointer}
-.pac-item:hover{background:var(--sage-light)}
-.pac-item-query{font-size:13px;font-weight:600;color:var(--ink)}
-gmp-place-autocomplete{width:100%;display:block;--gmp-mat-color-surface:#fff;--gmp-mat-color-on-surface:#263633}
-@media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.map-layout{grid-template-columns:1fr}.places-card{max-height:none}.side-stack{grid-template-columns:1fr 1fr}}
-@media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.mapbox{height:450px}.toast{bottom:76px}}
+/* 新版 PlaceAutocompleteElement 樣式調整 */
+gmp-place-autocomplete {
+  width: 100%;
+  display: block;
+  border: 1px solid #e9efeb;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #fff;
+  --gmp-mat-color-surface: #ffffff;
+  --gmp-mat-color-on-surface: #263633;
+  --gmp-mat-color-primary: #4a987b;
+}
+@media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.toast{bottom:76px}}
 </style>
 </head>
 <body>
@@ -413,10 +355,10 @@ gmp-place-autocomplete{width:100%;display:block;--gmp-mat-color-surface:#fff;--g
         <button class="primary-btn" onclick="openAddPlaceModal()">＋ 新增地點</button>
       </div>
     </div>
-    <div class="map-searchbar" style="position:relative; top:0; left:0; width:100%; max-width:400px; margin-bottom:16px; box-shadow:var(--shadow-sm); z-index:1;">
+    <div class="map-searchbar">
       ⌕ <input id="places-search-input" placeholder="搜尋地點名稱、地址或備註..." oninput="renderPlacesUI()">
     </div>
-    <div class="map-filters" id="place-filters" style="position:relative; top:0; left:0; margin-bottom:24px; display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; max-width:100%;"></div>
+    <div class="map-filters" id="place-filters"></div>
     <div class="task-grid" id="saved-places-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; align-items:start;"></div>
   </section>
 
@@ -582,7 +524,7 @@ gmp-place-autocomplete{width:100%;display:block;--gmp-mat-color-surface:#fff;--g
   <div class="modal">
     <div class="modal-head"><h2>🔑 設定 Google Maps API 金鑰</h2><button class="close-btn" onclick="closeGmapKeyModal()">×</button></div>
     <p style="font-size:12px;color:#687770;line-height:1.6;margin-bottom:14px">
-      貼上您在 Google Cloud 申請的 <b>Maps JavaScript API</b> 與 <b>Places API</b> 金鑰。<br>
+      貼上您在 Google Cloud 申請的 <b>Maps JavaScript API</b> 與 <b>Places API (New)</b> 金鑰。<br>
       <small style="color:#9aa59f">（金鑰僅安全儲存在您的瀏覽器本機端，不會上傳至外網）</small>
     </p>
     <div class="field">
@@ -603,7 +545,7 @@ gmp-place-autocomplete{width:100%;display:block;--gmp-mat-color-surface:#fff;--g
     <div class="field" id="np-search-wrap">
       <label>🔍 搜尋地點 (輸入並點選下拉清單，自動依類型帶入營業、公休與推薦美食)</label>
       <div id="place-autocomplete-container" style="background:#fff; border-radius:var(--radius-sm);">
-        <input id="np-search-input" placeholder="輸入地點名稱或地址（例如：晴明身心診所、春水堂）..." style="width:100%;border:1px solid #e9efeb;border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;">
+        <input id="np-search-fallback" placeholder="請先設定 Google API 金鑰以啟用自動搜尋..." disabled style="width:100%;border:1px solid #e9efeb;border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;background:#f9fbf9;">
       </div>
     </div>
     <div class="field"><label>地點名稱 *</label><input id="np-name" placeholder="例如：春水堂 創始店"></div>
@@ -786,15 +728,14 @@ function toLocalISO(d = new Date()) { const y = d.getFullYear(); const m = Strin
 const PLACE_CATS = { '餐廳': { icon: '🍝', bg: '#fff8e7' }, '甜點': { icon: '🍰', bg: '#fdf4ff' }, '咖啡': { icon: '☕', bg: '#f6e7d8' }, '飲料店': { icon: '🧋', bg: '#e0f2fe' }, '診所': { icon: '🏥', bg: '#ebf4ff' }, '便利商店': { icon: '🏪', bg: '#e8f7f0' }, '書局': { icon: '📚', bg: '#fef3c7' }, '服飾': { icon: '👗', bg: '#fff0f3' }, '公園': { icon: '🌳', bg: '#edf5eb' }, '景點': { icon: '🎡', bg: '#ffedd5' }, '學校': { icon: '🏫', bg: '#f3e8ff' }, '市場': { icon: '🧺', bg: '#ffedd5' }, '其他': { icon: '📍', bg: '#f3f4f6' } };
 const DEFAULT_PLACES = [ {id:101, name:'小日子手沖咖啡', cat:'咖啡', address:'台中市西屯區逢甲路', hours:'🚫 公休時間：星期一\n星期一: 休息\n星期二: 10:00–18:00', note:'平日下午去很適合帶筆電工作', url:''} ];
 
-let autocompleteInstance = null;
-
+// 純新版 Google Places API (New) 載入與初始化
 function initPlacesEngine() {
   const btn = document.getElementById('gmap-status-btn');
   if (S.gmapKey) {
     btn.textContent = '🔑 Google API (自動抓取已啟用)'; btn.classList.add('active');
     if (!window.google || !window.google.maps) {
       const s = document.createElement('script');
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&language=zh-TW&region=TW&callback=setupAutocomplete`;
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&v=weekly&language=zh-TW&region=TW&callback=setupAutocomplete`;
       s.async = true; s.onerror = () => toast('無法載入 Google Maps API，請檢查金鑰'); document.head.appendChild(s);
     } else { setupAutocomplete(); }
   } else { btn.textContent = '🔑 設定 Google API (啟用自動抓取)'; btn.classList.remove('active'); }
@@ -804,7 +745,7 @@ function openGmapKeyModal() { document.getElementById('gmap-key-input').value = 
 function closeGmapKeyModal() { document.getElementById('gmap-modal').classList.remove('open'); }
 function saveGmapKey() {
   const k = document.getElementById('gmap-key-input').value.trim(); if (!k) { toast('請輸入有效的 Google Maps API 金鑰'); return; }
-  localStorage.setItem('bb3_gmap_key', k); S.gmapKey = k; save(); closeGmapKeyModal(); toast('正在載入 Google Places 引擎...'); setTimeout(() => location.reload(), 400);
+  localStorage.setItem('bb3_gmap_key', k); S.gmapKey = k; save(); closeGmapKeyModal(); toast('正在載入 Google Places (New) 引擎...'); setTimeout(() => location.reload(), 400);
 }
 function clearGmapKey() { localStorage.removeItem('bb3_gmap_key'); S.gmapKey = ''; save(); closeGmapKeyModal(); toast('已切換為純手動輸入模式'); setTimeout(() => location.reload(), 400); }
 
@@ -887,7 +828,6 @@ function buildCategoryNote({ cat, rating, userRatingsTotal, phone, editorial, re
     if (editorial) {
       lines.push(`🍽️ 特色與推薦：${editorial}`);
     }
-    // 從高分評論中抓取網友推薦餐點或心得摘要
     if (reviews && reviews.length) {
       const goodReviews = reviews
         .filter(r => (r.rating || 5) >= 4 && (r.text?.text || r.text))
@@ -931,47 +871,17 @@ function populatePlaceFields(data) {
   toast(`✅ 已自動帶入「${guessedCat}」營業、公休與詳細資訊！`);
 }
 
-// 同時支援經典 Autocomplete (穩定度最高、支援完整 reviews/opening_hours) 與新版 PlaceAutocompleteElement
-window.setupAutocomplete = function() {
+// 純新版 Places API (New) 的 PlaceAutocompleteElement 初始化
+window.setupAutocomplete = async function() {
   const container = document.getElementById('place-autocomplete-container');
-  if (!container || !window.google || !window.google.maps || !window.google.maps.places) return;
+  if (!container || !window.google || !window.google.maps) return;
 
-  container.innerHTML = `<input id="np-search-input" placeholder="輸入地點名稱或地址（例如：晴明身心診所、春水堂）..." style="width:100%;border:1px solid #e9efeb;border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;">`;
-  const input = document.getElementById('np-search-input');
-
-  // 優先使用經典 Autocomplete (在 Modal 內最穩定且一次回傳 opening_hours / reviews / editorial_summary)
-  if (typeof google.maps.places.Autocomplete === 'function') {
-    autocompleteInstance = new google.maps.places.Autocomplete(input, {
-      componentRestrictions: { country: 'tw' },
-      fields: ['name', 'formatted_address', 'opening_hours', 'types', 'url', 'rating', 'user_ratings_total', 'formatted_phone_number', 'reviews', 'editorial_summary']
-    });
-
-    autocompleteInstance.addListener('place_changed', () => {
-      const place = autocompleteInstance.getPlace();
-      if (!place || (!place.name && !place.formatted_address)) {
-        toast('請從下拉選單中點選一個地點');
-        return;
-      }
-      populatePlaceFields({
-        name: place.name || input.value,
-        address: place.formatted_address || '',
-        types: place.types || [],
-        weekdayText: place.opening_hours?.weekday_text || [],
-        url: place.url || '',
-        rating: place.rating,
-        userRatingsTotal: place.user_ratings_total,
-        phone: place.formatted_phone_number || '',
-        editorial: place.editorial_summary?.overview || '',
-        reviews: place.reviews || []
-      });
-    });
-    return;
-  }
-
-  // 若環境僅提供 PlaceAutocompleteElement，則同時綁定新版 gmp-select 與舊版 gmp-placeselect
-  if (typeof google.maps.places.PlaceAutocompleteElement === 'function') {
+  try {
+    // 動態載入新版 places 程式庫
+    const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
     container.innerHTML = '';
-    const pacEl = new google.maps.places.PlaceAutocompleteElement({
+
+    const pacEl = new PlaceAutocompleteElement({
       includedRegionCodes: ['tw']
     });
     pacEl.style.width = '100%';
@@ -981,13 +891,26 @@ window.setupAutocomplete = function() {
       if (!place) return;
       try {
         await place.fetchFields({
-          fields: ['displayName', 'formattedAddress', 'regularOpeningHours', 'types', 'googleMapsURI', 'rating', 'userRatingCount', 'nationalPhoneNumber', 'editorialSummary', 'reviews']
+          fields: [
+            'displayName',
+            'formattedAddress',
+            'regularOpeningHours',
+            'types',
+            'googleMapsURI',
+            'rating',
+            'userRatingCount',
+            'nationalPhoneNumber',
+            'editorialSummary',
+            'reviews'
+          ]
         });
       } catch (err) {
+        // 若部分進階欄位因權限無法取得，自動降級抓基本欄位確保不中斷
         await place.fetchFields({
           fields: ['displayName', 'formattedAddress', 'regularOpeningHours', 'types', 'googleMapsURI']
         });
       }
+
       populatePlaceFields({
         name: place.displayName || '',
         address: place.formattedAddress || '',
@@ -1002,13 +925,20 @@ window.setupAutocomplete = function() {
       });
     };
 
+    // 監聽新版官方 gmp-select 事件 (取代舊版 gmp-placeselect)
     pacEl.addEventListener('gmp-select', async (e) => {
       const place = e.placePrediction ? e.placePrediction.toPlace() : e.place;
       await handleNewPlace(place);
     });
+
+    // 相容舊版事件名稱以防萬一
     pacEl.addEventListener('gmp-placeselect', async (e) => {
       await handleNewPlace(e.place);
     });
+
+  } catch (err) {
+    console.error('Places API (New) 載入錯誤:', err);
+    toast('Places API (New) 初始化失敗，請確認 API 金鑰設定');
   }
 };
 
