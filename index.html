@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7faf8">
 <title>ACACIA_Everyday</title>
+<!-- Google Identity Services & GAPI SDK -->
+<script src="https://accounts.google.com/gsi/client" async defer onload="initGIS()"></script>
+<script src="https://apis.google.com/js/api.js" async defer onload="initGAPI()"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap');
 :root{--ink:#263633;--muted:#8a9893;--sage:#4a987b;--sage-light:#eaf6ef;--sage-dark:#3d876c;--mint:#dff2e9;--line:#edf1ee;--paper:#fff;--bg:#f7faf8;--shadow:0 12px 36px #29483a0b;--shadow-sm:0 2px 8px #29483a08;--nav-w:240px;--radius:14px;--radius-sm:10px;--tr:.2s ease}
@@ -27,20 +30,29 @@ button{cursor:pointer;color:inherit;background:none}
 .nav .count{margin-left:auto;background:#f1f4f2;color:#8c9993;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700}
 .sidebar-bottom{margin-top:auto}
 .profile{display:flex;align-items:center;gap:10px;padding:14px 8px 0;border-top:1px solid var(--line)}
-.avatar{width:34px;height:34px;border-radius:50%;background:#f8e9da;display:grid;place-items:center;font-size:16px}
-.profile-info strong{font-size:12px;display:block}
-.profile-info small{font-size:10px;color:var(--muted)}
+.avatar{width:34px;height:34px;border-radius:50%;background:#f8e9da;display:grid;place-items:center;font-size:16px;overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.profile-info{flex:1;min-width:0}
+.profile-info strong{font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-info small{font-size:10px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sync-btn{margin-top:10px;width:100%;padding:8px 10px;border-radius:var(--radius-sm);background:var(--sage-light);color:var(--sage-dark);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--tr);border:1px solid #c5ddd0}
+.sync-btn:hover{background:var(--sage);color:#fff}
+.sync-btn.logged-in{background:#f6f9f7;color:#5a6d63;border-color:var(--line);font-weight:600}
+.sync-btn.logged-in:hover{background:#fee2e2;color:#ef4444;border-color:#fecaca}
 .mobile-nav{display:none;position:fixed;inset:auto 0 0 0;background:#fff;border-top:1px solid var(--line);padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:30;justify-content:space-around;box-shadow:0 -4px 20px #29483a08}
 .mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;color:#8a9893;padding:4px 12px;border-radius:10px;transition:var(--tr)}
 .mobile-nav button .m-ico{font-size:17px}
 .mobile-nav button.active{color:var(--sage-dark);background:var(--sage-light)}
 .main{margin-left:var(--nav-w);width:calc(100% - var(--nav-w));padding:24px 36px 60px;max-width:1400px}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap}
 .crumb{font-size:12px;color:#9aa59f}.crumb b{color:#53645c;font-weight:600}
 .top-actions{display:flex;align-items:center;gap:8px}
 .search-box{height:36px;padding:0 14px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-sm);color:#9aa59f;display:flex;align-items:center;gap:12px;font-size:12px;transition:var(--tr)}
 .search-box:hover{border-color:#c5d0c9;color:var(--ink)}
 .search-box kbd{font-size:10px;border:1px solid var(--line);border-radius:4px;padding:1px 5px;color:#b5bdb8;font-family:inherit}
+.cloud-pill{height:36px;padding:0 12px;border-radius:var(--radius-sm);background:#fff;border:1px solid var(--line);font-size:12px;font-weight:600;color:#5a6d63;display:flex;align-items:center;gap:6px;transition:var(--tr)}
+.cloud-pill:hover{background:var(--sage-light);border-color:var(--sage);color:var(--sage-dark)}
+.cloud-pill.synced{background:var(--sage-light);border-color:#c5ddd0;color:var(--sage-dark)}
 .top-icon{height:36px;width:36px;border-radius:var(--radius-sm);background:white;border:1px solid var(--line);font-size:15px;display:grid;place-items:center;transition:var(--tr);position:relative}
 .top-icon:hover{background:var(--sage-light);border-color:var(--sage)}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin:16px 0 22px;gap:12px;flex-wrap:wrap}
@@ -199,7 +211,6 @@ button{cursor:pointer;color:inherit;background:none}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:#263f34;color:#fff;border-radius:var(--radius-sm);padding:10px 18px;font-size:12px;font-weight:500;opacity:0;transition:.3s;pointer-events:none;z-index:200;white-space:nowrap}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .empty{text-align:center;color:#a5b0aa;font-size:12px;padding:28px 0;line-height:1.6}
-/* 內嵌式地點搜尋建議選單 */
 .place-search-row{display:flex;gap:8px;align-items:center}
 .place-search-row input{flex:1}
 .place-search-results{display:none;flex-direction:column;border:1px solid #d5e2db;border-radius:var(--radius-sm);background:#fff;margin-top:4px;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px #29483a14}
@@ -230,9 +241,13 @@ button{cursor:pointer;color:inherit;background:none}
   </nav>
   <div class="sidebar-bottom">
     <div class="profile">
-      <div class="avatar">🐻</div>
-      <div class="profile-info"><strong>Hi～</strong><small>讓今天留一點空白 🌱</small></div>
+      <div class="avatar" id="user-avatar">🐻</div>
+      <div class="profile-info">
+        <strong id="user-name">Hi～ 訪客模式</strong>
+        <small id="sync-status-text">僅儲存於此瀏覽器 🌱</small>
+      </div>
     </div>
+    <button class="sync-btn" id="sidebar-auth-btn" onclick="handleAuthClick()">☁️ Google 登入同步</button>
   </div>
 </aside>
 
@@ -241,6 +256,7 @@ button{cursor:pointer;color:inherit;background:none}
   <button data-v="calendar"><span class="m-ico">▦</span>行事曆</button>
   <button data-v="places"><span class="m-ico">📍</span>地點</button>
   <button data-v="tasks"><span class="m-ico">☑</span>待辦</button>
+  <button data-v="shopping"><span class="m-ico">🛒</span>記帳</button>
 </nav>
 
 <main class="main">
@@ -248,6 +264,10 @@ button{cursor:pointer;color:inherit;background:none}
     <div class="crumb">ACACIA / <b id="crumb-text">今天</b></div>
     <div class="top-actions">
       <button class="search-box" onclick="openCmdModal()">⌕ 搜尋你的 ACACIA <kbd>⌘K</kbd></button>
+      <button class="cloud-pill" id="top-auth-btn" onclick="handleAuthClick()" title="Google Drive 雲端同步">
+        <span id="top-cloud-icon">☁️</span>
+        <span id="top-cloud-text">登入同步</span>
+      </button>
       <button class="top-icon" onclick="resetDemoData()" title="重置範例資料">⚙</button>
     </div>
   </header>
@@ -564,18 +584,310 @@ button{cursor:pointer;color:inherit;background:none}
 <div class="toast" id="toast"></div>
 
 <script>
+// ==========================================
+// 1. 設定區：Cloudflare Worker & Google OAuth Client ID
+// ==========================================
 const PROXY_URL = 'https://bold-cloud-4bb3.s3311453038.workers.dev';
+
+// 請將下方字串替換為你在 Google Cloud Console 建立的「OAuth 2.0 用戶端 ID」
+const GOOGLE_CLIENT_ID = '請替換為你的_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+const DRIVE_SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.profile';
+const DRIVE_FILE_NAME = 'acacia_data.json';
 
 localStorage.removeItem('bb3_gmap_key');
 
 let S = JSON.parse(localStorage.getItem('acacia_data')) || {
   events: [], tasks: [], shopping: [], places: [], favorites: [],
   calYear: new Date().getFullYear(), calMonth: new Date().getMonth(),
-  mapCat: '全部'
+  mapCat: '全部', updatedAt: 0
 };
 if (S.gmapKey) { delete S.gmapKey; }
 
-function save() { localStorage.setItem('acacia_data', JSON.stringify(S)); }
+// ==========================================
+// 2. Google Identity Services (GIS) + Drive AppData 同步引擎
+// ==========================================
+let tokenClient = null;
+let gapiInited = false;
+let gisInited = false;
+let accessToken = sessionStorage.getItem('acacia_g_token') || null;
+let driveFileId = sessionStorage.getItem('acacia_drive_file_id') || null;
+let syncTimer = null;
+let isSyncing = false;
+
+function initGAPI() {
+  gapi.load('client', async () => {
+    await gapi.client.init({
+      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+    });
+    gapiInited = true;
+    tryRestoreSession();
+  });
+}
+
+function initGIS() {
+  if (!window.google || !google.accounts) return;
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOGLE_CLIENT_ID,
+    scope: DRIVE_SCOPES,
+    callback: async (resp) => {
+      if (resp.error !== undefined) {
+        toast('Google 登入授權失敗');
+        return;
+      }
+      accessToken = resp.access_token;
+      sessionStorage.setItem('acacia_g_token', accessToken);
+      gapi.client.setToken({ access_token: accessToken });
+      await fetchUserProfile();
+      await syncFromDriveOnLogin();
+    },
+  });
+  gisInited = true;
+  tryRestoreSession();
+}
+
+async function tryRestoreSession() {
+  if (!gapiInited || !gisInited || !accessToken) return;
+  gapi.client.setToken({ access_token: accessToken });
+  const ok = await fetchUserProfile(true);
+  if (ok) {
+    await syncFromDriveOnLogin(true);
+  } else {
+    // Token 過期則清理
+    sessionStorage.removeItem('acacia_g_token');
+    accessToken = null;
+    updateAuthUI(null);
+  }
+}
+
+function handleAuthClick() {
+  if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('請替換')) {
+    toast('請先在 index.html 設定您的 GOOGLE_CLIENT_ID');
+    return;
+  }
+  if (!gapiInited || !gisInited) {
+    toast('Google 登入元件載入中，請稍候再試...');
+    return;
+  }
+  if (accessToken) {
+    if (confirm('目前已完成雲端同步。確定要登出 Google 帳號嗎？（登出後資料仍會保留於此裝置）')) {
+      google.accounts.oauth2.revoke(accessToken, () => {});
+      accessToken = null;
+      driveFileId = null;
+      sessionStorage.removeItem('acacia_g_token');
+      sessionStorage.removeItem('acacia_drive_file_id');
+      gapi.client.setToken(null);
+      updateAuthUI(null);
+      toast('已登出 Google 雲端同步');
+    }
+  } else {
+    tokenClient.requestAccessToken({ prompt: '' });
+  }
+}
+
+async function fetchUserProfile(silent = false) {
+  try {
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+    if (!res.ok) return false;
+    const profile = await res.json();
+    updateAuthUI(profile);
+    return true;
+  } catch (e) {
+    if (!silent) console.error('取得使用者資訊失敗:', e);
+    return false;
+  }
+}
+
+function updateAuthUI(profile) {
+  const avatarEl = document.getElementById('user-avatar');
+  const nameEl = document.getElementById('user-name');
+  const statusEl = document.getElementById('sync-status-text');
+  const sideBtn = document.getElementById('sidebar-auth-btn');
+  const topBtn = document.getElementById('top-auth-btn');
+  const topIcon = document.getElementById('top-cloud-icon');
+  const topText = document.getElementById('top-cloud-text');
+
+  if (profile) {
+    avatarEl.innerHTML = profile.picture ? `<img src="${esc(profile.picture)}" alt="avatar">` : '😊';
+    nameEl.textContent = profile.name || 'Google 使用者';
+    statusEl.textContent = '☁️ Google Drive 自動同步中';
+    sideBtn.textContent = '登出雲端帳號';
+    sideBtn.classList.add('logged-in');
+    topBtn.classList.add('synced');
+    topIcon.textContent = '✅';
+    topText.textContent = '已同步';
+  } else {
+    avatarEl.innerHTML = '🐻';
+    nameEl.textContent = 'Hi～ 訪客模式';
+    statusEl.textContent = '僅儲存於此瀏覽器 🌱';
+    sideBtn.textContent = '☁️ Google 登入同步';
+    sideBtn.classList.remove('logged-in');
+    topBtn.classList.remove('synced');
+    topIcon.textContent = '☁️';
+    topText.textContent = '登入同步';
+  }
+}
+
+function setSyncStatusIndicator(state) {
+  if (!accessToken) return;
+  const statusEl = document.getElementById('sync-status-text');
+  const topIcon = document.getElementById('top-cloud-icon');
+  const topText = document.getElementById('top-cloud-text');
+  if (state === 'syncing') {
+    statusEl.textContent = '🔄 正在同步至 Google Drive...';
+    topIcon.textContent = '🔄';
+    topText.textContent = '同步中...';
+  } else if (state === 'saved') {
+    const now = new Date();
+    const tStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    statusEl.textContent = `✅ 已同步至雲端 (${tStr})`;
+    topIcon.textContent = '✅';
+    topText.textContent = '已同步';
+  } else if (state === 'error') {
+    statusEl.textContent = '⚠️ 雲端同步失敗，已暫存本機';
+    topIcon.textContent = '⚠️';
+    topText.textContent = '同步失敗';
+  }
+}
+
+// 尋找 AppData 資料夾中的 acacia_data.json
+async function findDriveAppDataFile() {
+  if (driveFileId) return driveFileId;
+  const res = await gapi.client.drive.files.list({
+    spaces: 'appDataFolder',
+    fields: 'files(id, name, modifiedTime)',
+    q: `name = '${DRIVE_FILE_NAME}' and trashed = false`,
+    pageSize: 1
+  });
+  const files = res.result.files || [];
+  if (files.length > 0) {
+    driveFileId = files[0].id;
+    sessionStorage.setItem('acacia_drive_file_id', driveFileId);
+    return driveFileId;
+  }
+  return null;
+}
+
+// 登入時從 Google Drive 讀取或初始化雲端備份
+async function syncFromDriveOnLogin(silent = false) {
+  if (!accessToken) return;
+  setSyncStatusIndicator('syncing');
+  try {
+    const fileId = await findDriveAppDataFile();
+    if (fileId) {
+      // 下載雲端 JSON 檔案內容
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (res.ok) {
+        const cloudData = await res.json();
+        if (cloudData && typeof cloudData === 'object') {
+          S = {
+            ...S,
+            events: cloudData.events || [],
+            tasks: cloudData.tasks || [],
+            shopping: cloudData.shopping || [],
+            places: cloudData.places || [],
+            favorites: cloudData.favorites || [],
+            updatedAt: cloudData.updatedAt || Date.now()
+          };
+          localStorage.setItem('acacia_data', JSON.stringify(S));
+          refreshAllViews();
+          setSyncStatusIndicator('saved');
+          if (!silent) toast('☁️ 已從 Google Drive 載入您的最新資料！');
+          return;
+        }
+      }
+    }
+    // 若雲端還沒有檔案，立即將目前本機資料上傳建立第一份雲端備份
+    await uploadToDriveAppData();
+    if (!silent) toast('☁️ 已在您的 Google Drive 建立專屬雲端備份！');
+  } catch (err) {
+    console.error('雲端載入失敗:', err);
+    setSyncStatusIndicator('error');
+  }
+}
+
+// 將資料寫入 Google Drive AppData 資料夾 (Multipart Upload)
+async function uploadToDriveAppData() {
+  if (!accessToken || isSyncing) return;
+  isSyncing = true;
+  setSyncStatusIndicator('syncing');
+  try {
+    const fileId = await findDriveAppDataFile();
+    const metadata = fileId
+      ? { name: DRIVE_FILE_NAME, mimeType: 'application/json' }
+      : { name: DRIVE_FILE_NAME, mimeType: 'application/json', parents: ['appDataFolder'] };
+
+    const boundary = '-------acacia_drive_boundary_314159';
+    const delimiter = `\r\n--${boundary}\r\n`;
+    const closeDelim = `\r\n--${boundary}--`;
+
+    const body =
+      delimiter +
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+      JSON.stringify(metadata) +
+      delimiter +
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+      JSON.stringify(S) +
+      closeDelim;
+
+    const url = fileId
+      ? `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`
+      : 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+
+    const res = await fetch(url, {
+      method: fileId ? 'PATCH' : 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': `multipart/related; boundary=${boundary}`
+      },
+      body
+    });
+
+    if (!res.ok) throw new Error('Drive upload failed');
+    const data = await res.json();
+    if (data.id) {
+      driveFileId = data.id;
+      sessionStorage.setItem('acacia_drive_file_id', driveFileId);
+    }
+    setSyncStatusIndicator('saved');
+  } catch (err) {
+    console.error('上傳 Google Drive 失敗:', err);
+    setSyncStatusIndicator('error');
+  } finally {
+    isSyncing = false;
+  }
+}
+
+function scheduleDriveSync() {
+  if (!accessToken) return;
+  setSyncStatusIndicator('syncing');
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    uploadToDriveAppData();
+  }, 1200);
+}
+
+// 統一儲存入口：同時更新本機快取並觸發 Google Drive 雲端同步
+function save() {
+  S.updatedAt = Date.now();
+  localStorage.setItem('acacia_data', JSON.stringify(S));
+  scheduleDriveSync();
+}
+
+function refreshAllViews() {
+  initToday();
+  renderCalendar();
+  renderPlacesUI();
+  renderFullTasks();
+  renderFullShop();
+}
+
+// ==========================================
+// 3. 應用程式核心邏輯
+// ==========================================
 function esc(str) { return String(str||'').replace(/[&<>'"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m])); }
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -624,10 +936,11 @@ function initToday() {
 function renderSidebarTasks() {
   const st = document.getElementById('sidebar-tasks');
   const uncompleted = S.tasks.filter(t => !t.done).slice(0, 5);
+  const tc = document.getElementById('task-count');
+  if(tc) tc.textContent = S.tasks.filter(t=>!t.done).length || '0';
   if(!st) return;
   if(!uncompleted.length) { st.innerHTML = '<div style="font-size:11px;color:#a5b0aa;padding:10px 0;">目前沒有待辦事項 🎉</div>'; return; }
   st.innerHTML = uncompleted.map(t => `<div class="todo-item"><button class="todo-check" onclick="toggleTask(${S.tasks.indexOf(t)})"></button><span class="todo-text">${esc(t.title)}</span></div>`).join('');
-  const tc = document.getElementById('task-count'); if(tc) tc.textContent = S.tasks.filter(t=>!t.done).length || '0';
 }
 function updateStats(todaysEvents = []) {
   const evCount = document.getElementById('ws-events'); const taskCount = document.getElementById('ws-tasks');
@@ -920,7 +1233,8 @@ function selectSearchedPlace(idx) {
 }
 
 function renderPlacesUI() {
-  const fc = document.getElementById('place-filters'); const cats = ['全部', ...Object.keys(PLACE_CATS)];
+  const fc = document.getElementById('place-filters'); if(!fc) return;
+  const cats = ['全部', ...Object.keys(PLACE_CATS)];
   fc.innerHTML = cats.map(c => `<button class="map-filter${S.mapCat === c ? ' on' : ''}" onclick="filterByCat('${c}')">${c === '全部' ? '全部' : PLACE_CATS[c].icon + ' ' + c}</button>`).join('');
   const grid = document.getElementById('saved-places-grid'); const q = (document.getElementById('places-search-input')?.value || '').trim().toLowerCase();
   const filtered = S.places.filter(p => {
@@ -993,7 +1307,8 @@ function deletePlace(id) { if (confirm('確定要刪除這個地點嗎？')) { S
 
 let editTodoId = null; let editExpId = null;
 function renderFullTasks() {
-  const el = document.getElementById('full-task-list'); document.getElementById('task-card-count').textContent = S.tasks.length + ' 項';
+  const el = document.getElementById('full-task-list'); if(!el) return;
+  document.getElementById('task-card-count').textContent = S.tasks.length + ' 項';
   if (!S.tasks.length) { el.innerHTML = '<div class="empty" style="padding:16px 0">還沒有待辦事項</div>'; return; }
   el.innerHTML = S.tasks.map((t, i) => `
     <div class="task-row${t.done ? ' done' : ''}" style="background:${t.bgColor||'#fff'}; border:1px solid ${t.bgColor&&t.bgColor!=='#ffffff'&&t.bgColor!=='#fff'?t.bgColor:'transparent'}">
@@ -1037,7 +1352,7 @@ function toggleCustomCat() {
   document.getElementById('exp-cat-custom').style.display = (sel === '其他') ? 'block' : 'none';
 }
 function renderFullShop() {
-  const el = document.getElementById('full-shop-list'); const statsEl = document.getElementById('expense-stats-container'); if(!statsEl) return;
+  const el = document.getElementById('full-shop-list'); const statsEl = document.getElementById('expense-stats-container'); if(!statsEl || !el) return;
   document.getElementById('shop-card-count').textContent = S.shopping.length + ' 筆';
   const now = new Date(); let y = now.getFullYear(), m = now.getMonth();
   if (now.getDate() < 10) { m -= 1; if (m < 0) { m = 11; y -= 1; } }
@@ -1184,7 +1499,8 @@ function initSample(force = false) {
   if (force || !S.shopping.length) { S.shopping = [{id:1,title:'燕麥奶',amt:120,store:'全聯',cat:'食',date:iso,time:'18:00',done:false}]; }
   if (force || !S.favorites.length) { S.favorites = [101]; }
   if (force || !S.places.length) { S.places = JSON.parse(JSON.stringify(DEFAULT_PLACES)); }
-  save();
+  localStorage.setItem('acacia_data', JSON.stringify(S));
+  if (force) scheduleDriveSync();
 }
 
 function resetDemoData() {
