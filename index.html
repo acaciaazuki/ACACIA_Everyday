@@ -224,7 +224,7 @@ button{cursor:pointer;color:inherit;background:none}
 .batch-date.selected { background-color: var(--sage); color: white; font-weight: bold; }
 .modal-backdrop{position:fixed;inset:0;background:#1d302858;display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal-backdrop.open{display:flex}
-.modal{width:min(480px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 20px 60px #17362933;max-height:90vh;overflow:visible}
+.modal{width:min(480px,100%);background:#fff;border-radius:18px;padding:24px;box-shadow:0 20px 60px #17362933;max-height:90vh;overflow-y:auto}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
 .modal-head h2{font-size:17px;font-weight:700;margin:0}
 .close-btn{background:#f4f7f4;border-radius:8px;width:30px;height:30px;font-size:15px;color:#78867f;display:grid;place-items:center;transition:var(--tr)}
@@ -263,6 +263,12 @@ button{cursor:pointer;color:inherit;background:none}
 .input-bar input{flex:1;border:1px solid var(--line);border-radius:var(--radius-sm);padding:9px 12px;font-size:12px;transition:var(--tr)}
 .input-bar input:focus{border-color:var(--sage);box-shadow:0 0 0 3px var(--sage-light)}
 .input-bar button{width:32px;height:32px;border-radius:8px;background:var(--sage);color:white;font-size:14px;display:grid;place-items:center}
+/* 確保 Google Autocomplete 下拉選單浮在 Modal 最上層且美觀 */
+.pac-container{z-index:99999!important;border-radius:12px;border:1px solid var(--line);box-shadow:0 12px 36px #29483a1f;font-family:'DM Sans','Noto Sans TC',sans-serif;margin-top:4px;overflow:hidden}
+.pac-item{padding:8px 12px;font-size:12px;cursor:pointer}
+.pac-item:hover{background:var(--sage-light)}
+.pac-item-query{font-size:13px;font-weight:600;color:var(--ink)}
+gmp-place-autocomplete{width:100%;display:block;--gmp-mat-color-surface:#fff;--gmp-mat-color-on-surface:#263633}
 @media(max-width:1000px){.main{padding:20px 24px}.today-grid,.task-grid{grid-template-columns:1fr}.map-layout{grid-template-columns:1fr}.places-card{max-height:none}.side-stack{grid-template-columns:1fr 1fr}}
 @media(max-width:680px){:root{--nav-w:0px}.sidebar{display:none}.mobile-nav{display:flex}.main{margin:0;width:100%;padding:16px 14px 88px}.side-stack{grid-template-columns:1fr}.mapbox{height:450px}.toast{bottom:76px}}
 </style>
@@ -576,7 +582,7 @@ button{cursor:pointer;color:inherit;background:none}
   <div class="modal">
     <div class="modal-head"><h2>🔑 設定 Google Maps API 金鑰</h2><button class="close-btn" onclick="closeGmapKeyModal()">×</button></div>
     <p style="font-size:12px;color:#687770;line-height:1.6;margin-bottom:14px">
-      貼上您在 Google Cloud 申請的 <b>Maps JavaScript API</b> 金鑰。<br>
+      貼上您在 Google Cloud 申請的 <b>Maps JavaScript API</b> 與 <b>Places API</b> 金鑰。<br>
       <small style="color:#9aa59f">（金鑰僅安全儲存在您的瀏覽器本機端，不會上傳至外網）</small>
     </p>
     <div class="field">
@@ -595,9 +601,10 @@ button{cursor:pointer;color:inherit;background:none}
   <div class="modal">
     <div class="modal-head"><h2>📍 收藏地點</h2><button class="close-btn" onclick="closeAddPlaceModal()">×</button></div>
     <div class="field" id="np-search-wrap">
-      <label>🔍 搜尋地點 (需啟用 Google API 以自動帶入資訊)</label>
-      <!-- 更新：使用新版 API 的專用容器取代原本的 input -->
-      <div id="place-autocomplete-container" style="background:#fff; border-radius:var(--radius-sm);"></div>
+      <label>🔍 搜尋地點 (輸入並點選下拉清單，自動依類型帶入營業、公休與推薦美食)</label>
+      <div id="place-autocomplete-container" style="background:#fff; border-radius:var(--radius-sm);">
+        <input id="np-search-input" placeholder="輸入地點名稱或地址（例如：晴明身心診所、春水堂）..." style="width:100%;border:1px solid #e9efeb;border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;">
+      </div>
     </div>
     <div class="field"><label>地點名稱 *</label><input id="np-name" placeholder="例如：春水堂 創始店"></div>
     <div class="field"><label>詳細地址</label><input id="np-address" placeholder="地點的完整地址"></div>
@@ -611,8 +618,8 @@ button{cursor:pointer;color:inherit;background:none}
         </select>
       </div>
     </div>
-    <div class="field"><label>營業時間</label><textarea id="np-hours" rows="3"></textarea></div>
-    <div class="field"><label>專屬筆記</label><textarea id="np-note" rows="2"></textarea></div>
+    <div class="field"><label>營業時間 & 公休時間</label><textarea id="np-hours" rows="4" placeholder="選擇地點後將自動帶入公休日與每日營業時間..."></textarea></div>
+    <div class="field"><label>專屬筆記 (推薦美食 / 診所提醒 / 備註)</label><textarea id="np-note" rows="3" placeholder="餐廳將自動帶入推薦美食與評論摘要；診所將帶入聯絡電話與看診提醒..."></textarea></div>
     <div class="field"><label>🎨 卡片背景色 (選填，將覆蓋分類預設色)</label><div class="swatches" id="np-bg-swatches"></div></div>
     <input type="hidden" id="np-url">
     <div class="modal-foot">
@@ -646,7 +653,7 @@ function esc(str) { return String(str||'').replace(/[&<>'"]/g, m => ({'&':'&amp;
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), 3200);
 }
 
 function showView(vid) {
@@ -777,18 +784,17 @@ function buildGenericSwatches(titleId, bgId, prefix) {
 
 function toLocalISO(d = new Date()) { const y = d.getFullYear(); const m = String(d.getMonth() + 1).padStart(2, '0'); const day = String(d.getDate()).padStart(2, '0'); return `${y}-${m}-${day}`; }
 const PLACE_CATS = { '餐廳': { icon: '🍝', bg: '#fff8e7' }, '甜點': { icon: '🍰', bg: '#fdf4ff' }, '咖啡': { icon: '☕', bg: '#f6e7d8' }, '飲料店': { icon: '🧋', bg: '#e0f2fe' }, '診所': { icon: '🏥', bg: '#ebf4ff' }, '便利商店': { icon: '🏪', bg: '#e8f7f0' }, '書局': { icon: '📚', bg: '#fef3c7' }, '服飾': { icon: '👗', bg: '#fff0f3' }, '公園': { icon: '🌳', bg: '#edf5eb' }, '景點': { icon: '🎡', bg: '#ffedd5' }, '學校': { icon: '🏫', bg: '#f3e8ff' }, '市場': { icon: '🧺', bg: '#ffedd5' }, '其他': { icon: '📍', bg: '#f3f4f6' } };
-const DEFAULT_PLACES = [ {id:101, name:'小日子手沖咖啡', cat:'咖啡', address:'台中市西屯區逢甲路', hours:'星期一: 休息\n星期二: 10:00–18:00', note:'平日下午去很適合帶筆電工作', url:''} ];
+const DEFAULT_PLACES = [ {id:101, name:'小日子手沖咖啡', cat:'咖啡', address:'台中市西屯區逢甲路', hours:'🚫 公休時間：星期一\n星期一: 休息\n星期二: 10:00–18:00', note:'平日下午去很適合帶筆電工作', url:''} ];
 
-let autocompleteElement = null;
+let autocompleteInstance = null;
 
 function initPlacesEngine() {
   const btn = document.getElementById('gmap-status-btn');
   if (S.gmapKey) {
     btn.textContent = '🔑 Google API (自動抓取已啟用)'; btn.classList.add('active');
-    if (!window.google) {
+    if (!window.google || !window.google.maps) {
       const s = document.createElement('script');
-      // 更新：加入 v=weekly 確保支援最新的 PlaceAutocompleteElement 
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&v=weekly&callback=setupAutocomplete`;
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&language=zh-TW&region=TW&callback=setupAutocomplete`;
       s.async = true; s.onerror = () => toast('無法載入 Google Maps API，請檢查金鑰'); document.head.appendChild(s);
     } else { setupAutocomplete(); }
   } else { btn.textContent = '🔑 設定 Google API (啟用自動抓取)'; btn.classList.remove('active'); }
@@ -798,55 +804,212 @@ function openGmapKeyModal() { document.getElementById('gmap-key-input').value = 
 function closeGmapKeyModal() { document.getElementById('gmap-modal').classList.remove('open'); }
 function saveGmapKey() {
   const k = document.getElementById('gmap-key-input').value.trim(); if (!k) { toast('請輸入有效的 Google Maps API 金鑰'); return; }
-  localStorage.setItem('bb3_gmap_key', k); S.gmapKey = k; closeGmapKeyModal(); toast('正在載入 Google Places 引擎...'); setTimeout(() => location.reload(), 400);
+  localStorage.setItem('bb3_gmap_key', k); S.gmapKey = k; save(); closeGmapKeyModal(); toast('正在載入 Google Places 引擎...'); setTimeout(() => location.reload(), 400);
 }
-function clearGmapKey() { localStorage.removeItem('bb3_gmap_key'); S.gmapKey = ''; closeGmapKeyModal(); toast('已切換為純手動輸入模式'); setTimeout(() => location.reload(), 400); }
+function clearGmapKey() { localStorage.removeItem('bb3_gmap_key'); S.gmapKey = ''; save(); closeGmapKeyModal(); toast('已切換為純手動輸入模式'); setTimeout(() => location.reload(), 400); }
 
-// 更新：改為使用新版 PlaceAutocompleteElement Web Component
+// 根據地點的 Google types 與名稱智慧判斷分類
+function detectPlaceCategory(name = '', types = []) {
+  const n = name.toLowerCase();
+  const t = types.map(x => x.toLowerCase());
+
+  if (t.some(x => ['doctor','dentist','hospital','clinic','physiotherapist','health','pharmacy','medical_lab'].includes(x)) || /診所|醫院|牙醫|眼科|身心|中醫|皮膚科|耳鼻喉|婦產|小兒|藥局|復健/.test(n)) {
+    return '診所';
+  }
+  if (t.includes('cafe') || /咖啡|cafe|coffee|星巴克|路易莎|cama/.test(n)) {
+    return '咖啡';
+  }
+  if (t.includes('bakery') || /甜點|蛋糕|烘焙|冰品|豆花|甜品|鬆餅|千層/.test(n)) {
+    return '甜點';
+  }
+  if (/飲料|茶|手搖|50嵐|迷客夏|清心|麻古|得正|五桐號|可不可|鶴茶樓|一沐日/.test(n)) {
+    return '飲料店';
+  }
+  if (t.some(x => ['restaurant','food','meal_takeaway','meal_delivery'].includes(x)) || /餐廳|麵|飯|鍋|食堂|小吃|燒肉|壽司|拉麵|早午餐|牛排|居酒屋|料理|水餃|便當/.test(n)) {
+    return '餐廳';
+  }
+  if (t.includes('convenience_store') || /超商|7-11|全家|萊爾富|ok超商|便利商店/.test(n)) {
+    return '便利商店';
+  }
+  if (t.some(x => ['book_store','library'].includes(x)) || /書局|書店|誠品|金石堂|墊腳石|圖書館/.test(n)) {
+    return '書局';
+  }
+  if (t.some(x => ['clothing_store','shoe_store'].includes(x)) || /服飾|衣|穿搭|uniqlo|gu|zara|net/.test(n)) {
+    return '服飾';
+  }
+  if (t.includes('park') || /公園|綠地|步道|森林/.test(n)) {
+    return '公園';
+  }
+  if (t.some(x => ['tourist_attraction','museum','art_gallery','amusement_park'].includes(x)) || /景點|園區|老街|博物館|美術館|農場/.test(n)) {
+    return '景點';
+  }
+  if (t.some(x => ['school','university','primary_school','secondary_school'].includes(x)) || /學校|大學|國小|國中|高中|幼稚園/.test(n)) {
+    return '學校';
+  }
+  if (t.some(x => ['supermarket','grocery_or_supermarket','market'].includes(x)) || /市場|夜市|超市|全聯|家樂福|好市多|黃昏市場/.test(n)) {
+    return '市場';
+  }
+  return '其他';
+}
+
+// 整理營業時間，並自動萃取「公休時間」置頂顯示
+function formatOpeningHours(weekdayArr = []) {
+  if (!weekdayArr || !weekdayArr.length) return '查無營業時間資訊';
+  const closedDays = [];
+  weekdayArr.forEach(line => {
+    if (/休息|公休|休診|Closed/i.test(line)) {
+      const dayName = line.split(/[:：]/)[0].trim();
+      if (dayName) closedDays.push(dayName);
+    }
+  });
+  const closedHeader = closedDays.length > 0
+    ? `🚫 公休時間：${closedDays.join('、')}\n`
+    : `✅ 公休時間：無固定公休 (每日營業)\n`;
+  return closedHeader + weekdayArr.join('\n');
+}
+
+// 依據地點分類自動組合「推薦美食 / 診所看診提醒 / 專屬筆記」
+function buildCategoryNote({ cat, rating, userRatingsTotal, phone, editorial, reviews = [] }) {
+  const lines = [];
+  const foodCats = ['餐廳', '甜點', '咖啡', '飲料店', '市場'];
+
+  if (rating) {
+    lines.push(`⭐ Google 評價：${rating} 顆星${userRatingsTotal ? ` (${userRatingsTotal} 則評論)` : ''}`);
+  }
+  if (phone) {
+    lines.push(`📞 聯絡電話：${phone}`);
+  }
+
+  if (cat === '診所') {
+    lines.push(`🏥 看診提醒：前往就診請記得攜帶健保卡，建議先查看上方門診與休診時間。`);
+    if (editorial) lines.push(`ℹ️ 簡介：${editorial}`);
+  } else if (foodCats.includes(cat)) {
+    if (editorial) {
+      lines.push(`🍽️ 特色與推薦：${editorial}`);
+    }
+    // 從高分評論中抓取網友推薦餐點或心得摘要
+    if (reviews && reviews.length) {
+      const goodReviews = reviews
+        .filter(r => (r.rating || 5) >= 4 && (r.text?.text || r.text))
+        .slice(0, 2)
+        .map(r => {
+          const raw = typeof r.text === 'string' ? r.text : (r.text?.text || '');
+          const clean = raw.replace(/\s+/g, ' ').trim();
+          return clean.length > 55 ? clean.slice(0, 55) + '...' : clean;
+        })
+        .filter(Boolean);
+      if (goodReviews.length) {
+        lines.push(`😋 網友推薦必點：\n「${goodReviews.join('」\n「')}」`);
+      }
+    }
+  } else {
+    if (editorial) lines.push(`ℹ️ 地點簡介：${editorial}`);
+  }
+
+  return lines.join('\n');
+}
+
+// 將抓取到的地點資料填入表單
+function populatePlaceFields(data) {
+  document.getElementById('np-name').value = data.name || '';
+  document.getElementById('np-address').value = data.address || '';
+  document.getElementById('np-url').value = data.url || '';
+
+  const guessedCat = detectPlaceCategory(data.name, data.types || []);
+  document.getElementById('np-cat').value = guessedCat;
+
+  document.getElementById('np-hours').value = formatOpeningHours(data.weekdayText);
+  document.getElementById('np-note').value = buildCategoryNote({
+    cat: guessedCat,
+    rating: data.rating,
+    userRatingsTotal: data.userRatingsTotal,
+    phone: data.phone,
+    editorial: data.editorial,
+    reviews: data.reviews
+  });
+
+  toast(`✅ 已自動帶入「${guessedCat}」營業、公休與詳細資訊！`);
+}
+
+// 同時支援經典 Autocomplete (穩定度最高、支援完整 reviews/opening_hours) 與新版 PlaceAutocompleteElement
 window.setupAutocomplete = function() {
   const container = document.getElementById('place-autocomplete-container');
-  if (!container || !window.google || !window.google.maps.places) return;
-  
-  // 每次呼叫時先清空容器（重置輸入狀態）
-  container.innerHTML = '';
-  
-  autocompleteElement = new google.maps.places.PlaceAutocompleteElement();
-  // 簡單調整內建 Web Component 的樣式填滿容器
-  autocompleteElement.style.width = '100%';
-  container.appendChild(autocompleteElement);
-  
-  autocompleteElement.addEventListener('gmp-placeselect', async (event) => {
-    const place = event.place;
-    if (!place) return;
-    
-    // 請求新版 API 對應的資料欄位
-    await place.fetchFields({ fields: ['displayName', 'formattedAddress', 'regularOpeningHours', 'googleMapsURI'] });
-    
-    document.getElementById('np-name').value = place.displayName || ''; 
-    document.getElementById('np-address').value = place.formattedAddress || '';
-    
-    if (place.regularOpeningHours && place.regularOpeningHours.weekdayDescriptions) { 
-      document.getElementById('np-hours').value = place.regularOpeningHours.weekdayDescriptions.join('\n'); 
-    } else { 
-      document.getElementById('np-hours').value = ''; 
-    }
-    
-    if (place.googleMapsURI) { 
-      document.getElementById('np-url').value = place.googleMapsURI; 
-    }
-    
-    const n = (place.displayName || '').toLowerCase(); let guessedCat = '其他';
-    if (n.includes('咖啡') || n.includes('星巴克') || n.includes('路易莎')) guessedCat = '咖啡'; 
-    else if (n.includes('餐廳') || n.includes('麵') || n.includes('飯') || n.includes('鍋') || n.includes('食堂')) guessedCat = '餐廳'; 
-    else if (n.includes('甜點') || n.includes('蛋糕')) guessedCat = '甜點'; 
-    else if (n.includes('飲料') || n.includes('茶') || n.includes('50嵐')) guessedCat = '飲料店'; 
-    else if (n.includes('診所') || n.includes('醫院') || n.includes('牙醫') || n.includes('眼科')) guessedCat = '診所'; 
-    else if (n.includes('超商') || n.includes('7-11') || n.includes('全家')) guessedCat = '便利商店'; 
-    else if (n.includes('書') || n.includes('誠品')) guessedCat = '書局';
-    
-    document.getElementById('np-cat').value = guessedCat; 
-    toast('✅ 已自動帶入地點資訊！');
-  });
+  if (!container || !window.google || !window.google.maps || !window.google.maps.places) return;
+
+  container.innerHTML = `<input id="np-search-input" placeholder="輸入地點名稱或地址（例如：晴明身心診所、春水堂）..." style="width:100%;border:1px solid #e9efeb;border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;">`;
+  const input = document.getElementById('np-search-input');
+
+  // 優先使用經典 Autocomplete (在 Modal 內最穩定且一次回傳 opening_hours / reviews / editorial_summary)
+  if (typeof google.maps.places.Autocomplete === 'function') {
+    autocompleteInstance = new google.maps.places.Autocomplete(input, {
+      componentRestrictions: { country: 'tw' },
+      fields: ['name', 'formatted_address', 'opening_hours', 'types', 'url', 'rating', 'user_ratings_total', 'formatted_phone_number', 'reviews', 'editorial_summary']
+    });
+
+    autocompleteInstance.addListener('place_changed', () => {
+      const place = autocompleteInstance.getPlace();
+      if (!place || (!place.name && !place.formatted_address)) {
+        toast('請從下拉選單中點選一個地點');
+        return;
+      }
+      populatePlaceFields({
+        name: place.name || input.value,
+        address: place.formatted_address || '',
+        types: place.types || [],
+        weekdayText: place.opening_hours?.weekday_text || [],
+        url: place.url || '',
+        rating: place.rating,
+        userRatingsTotal: place.user_ratings_total,
+        phone: place.formatted_phone_number || '',
+        editorial: place.editorial_summary?.overview || '',
+        reviews: place.reviews || []
+      });
+    });
+    return;
+  }
+
+  // 若環境僅提供 PlaceAutocompleteElement，則同時綁定新版 gmp-select 與舊版 gmp-placeselect
+  if (typeof google.maps.places.PlaceAutocompleteElement === 'function') {
+    container.innerHTML = '';
+    const pacEl = new google.maps.places.PlaceAutocompleteElement({
+      includedRegionCodes: ['tw']
+    });
+    pacEl.style.width = '100%';
+    container.appendChild(pacEl);
+
+    const handleNewPlace = async (place) => {
+      if (!place) return;
+      try {
+        await place.fetchFields({
+          fields: ['displayName', 'formattedAddress', 'regularOpeningHours', 'types', 'googleMapsURI', 'rating', 'userRatingCount', 'nationalPhoneNumber', 'editorialSummary', 'reviews']
+        });
+      } catch (err) {
+        await place.fetchFields({
+          fields: ['displayName', 'formattedAddress', 'regularOpeningHours', 'types', 'googleMapsURI']
+        });
+      }
+      populatePlaceFields({
+        name: place.displayName || '',
+        address: place.formattedAddress || '',
+        types: place.types || [],
+        weekdayText: place.regularOpeningHours?.weekdayDescriptions || [],
+        url: place.googleMapsURI || '',
+        rating: place.rating,
+        userRatingsTotal: place.userRatingCount,
+        phone: place.nationalPhoneNumber || '',
+        editorial: place.editorialSummary || '',
+        reviews: place.reviews || []
+      });
+    };
+
+    pacEl.addEventListener('gmp-select', async (e) => {
+      const place = e.placePrediction ? e.placePrediction.toPlace() : e.place;
+      await handleNewPlace(place);
+    });
+    pacEl.addEventListener('gmp-placeselect', async (e) => {
+      await handleNewPlace(e.place);
+    });
+  }
 };
 
 function renderPlacesUI() {
@@ -862,7 +1025,7 @@ function renderPlacesUI() {
     const c = PLACE_CATS[p.cat] || PLACE_CATS['其他'];
     const cardBg = p.bgColor && p.bgColor !== '#ffffff' ? p.bgColor : '#fff';
     const gUrl = p.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name + ' ' + (p.address||''))}`;
-    const hoursHtml = p.hours ? `<div style="font-size:11px;color:#8a9893;margin-top:8px;white-space:pre-wrap;max-height:65px;overflow-y:auto;background:#f9fbf9;padding:8px;border-radius:8px;border:1px solid #edf1ee;">${esc(p.hours)}</div>` : '';
+    const hoursHtml = p.hours ? `<div style="font-size:11px;color:#55645d;margin-top:8px;white-space:pre-wrap;max-height:95px;overflow-y:auto;background:#f9fbf9;padding:8px 10px;border-radius:8px;border:1px solid #edf1ee;line-height:1.55;">${esc(p.hours)}</div>` : '';
     return `
     <div class="card" style="padding:20px;display:flex;flex-direction:column;transition:var(--tr); background:${cardBg};">
       <div style="display:flex;gap:14px;align-items:flex-start;">
@@ -875,7 +1038,7 @@ function renderPlacesUI() {
       </div>
       ${p.address ? `<div style="font-size:12px;color:#55645d;margin-top:12px;display:flex;gap:6px;"><span style="opacity:0.6">📍</span><span style="flex:1">${esc(p.address)}</span></div>` : ''}
       ${hoursHtml}
-      ${p.note ? `<div style="font-size:12px;color:#66766e;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);line-height:1.5;">${esc(p.note)}</div>` : ''}
+      ${p.note ? `<div style="font-size:12px;color:#66766e;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);line-height:1.5;white-space:pre-wrap;">${esc(p.note)}</div>` : ''}
       <div style="margin-top:auto;padding-top:16px;display:flex;gap:8px;">
         <button class="primary-btn" style="flex:1;padding:10px;font-size:12px;" onclick="window.open('${gUrl}', '_blank')">↗ Google Maps</button>
         <button class="ghost-btn" style="padding:10px;font-size:12px;" onclick="openAddPlaceModal(${p.id})">編輯</button>
@@ -895,7 +1058,6 @@ function openAddPlaceModal(id = null) {
     S.npBgColor = p.bgColor || '#ffffff';
   } else {
     S.selectedPlaceId = null; document.getElementById('np-search-wrap').style.display = 'grid';
-    // 新增地點時自動重建 Google Search 欄位，確保前一次的搜尋輸入被清空
     if(window.google && window.google.maps) setupAutocomplete();
     
     document.getElementById('np-name').value = '';
@@ -903,7 +1065,7 @@ function openAddPlaceModal(id = null) {
     document.getElementById('np-hours').value = ''; document.getElementById('np-note').value = ''; document.getElementById('np-url').value = '';
     S.npBgColor = '#ffffff';
   }
-  S.npTitleColor = '#263633'; // dummy text color for generic swatches
+  S.npTitleColor = '#263633';
   buildGenericSwatches('np-bg-swatches', 'np-bg-swatches', 'np');
   document.getElementById('add-place-modal').classList.add('open');
 }
@@ -1092,7 +1254,7 @@ function renderCmdResults(q) {
   q = q.trim().toLowerCase(); const res = [];
   S.events.forEach(e => { if (!q || e.title.toLowerCase().includes(q) || (e.note || '').toLowerCase().includes(q)) { res.push({type: '行程', title: e.title, sub: `${e.dateISO} ${e.start || ''}`, act: () => { closeCmdModal(); openEditEv(e.id); }}); } });
   S.tasks.forEach(t => { if (!q || t.title.toLowerCase().includes(q)) { res.push({type: '待辦', title: t.title, sub: t.done ? '已完成' : '進行中', act: () => { closeCmdModal(); showView('tasks'); }}); } });
-  S.shopping.forEach(s => { if (!q || s.title.toLowerCase().includes(q)) { res.push({type: '購物', title: s.title, sub: s.done ? '已購買' : '待購買', act: () => { closeCmdModal(); showView('tasks'); }}); } });
+  S.shopping.forEach(s => { if (!q || s.title.toLowerCase().includes(q)) { res.push({type: '購物', title: s.title, sub: s.done ? '已購買' : '待購買', act: () => { closeCmdModal(); showView('shopping'); }}); } });
   S.places.forEach(p => { if (!q || p.name.toLowerCase().includes(q) || p.cat.includes(q) || (p.note || '').toLowerCase().includes(q)) { res.push({type: '地點', title: p.name, sub: `${p.cat}`, act: () => { closeCmdModal(); showView('places'); }}); } });
   const box = document.getElementById('cmd-results'); if (!res.length) { box.innerHTML = '<div class="empty" style="padding:24px 0">找不到相符的內容</div>'; return; }
   box.innerHTML = res.slice(0, 15).map((r, idx) => `<div class="cmd-item" data-idx="${idx}"><span class="cmd-badge">${r.type}</span><span class="cmd-title">${esc(r.title)}</span><span class="cmd-sub">${esc(r.sub)}</span></div>`).join('');
@@ -1113,7 +1275,7 @@ function initSample(force = false) {
   if (force || !S.tasks.length) { S.tasks = [{id:1,title:'回覆設計師的訊息',loc:'辦公室',date:iso,time:'14:00',done:false}]; }
   if (force || !S.shopping.length) { S.shopping = [{id:1,title:'燕麥奶',amt:120,store:'全聯',cat:'食',date:iso,time:'18:00',done:false}]; }
   if (force || !S.favorites.length) { S.favorites = [101]; }
-  if (force) { S.places = JSON.parse(JSON.stringify(DEFAULT_PLACES)); }
+  if (force || !S.places.length) { S.places = JSON.parse(JSON.stringify(DEFAULT_PLACES)); }
   save();
 }
 
