@@ -248,7 +248,6 @@ button{cursor:pointer;color:inherit;background:none}
     <div class="crumb">ACACIA / <b id="crumb-text">今天</b></div>
     <div class="top-actions">
       <button class="search-box" onclick="openCmdModal()">⌕ 搜尋你的 ACACIA <kbd>⌘K</kbd></button>
-      <button class="top-icon" onclick="openGmapKeyModal()" title="設定 Google Maps API 金鑰">🔑</button>
       <button class="top-icon" onclick="resetDemoData()" title="重置範例資料">⚙</button>
     </div>
   </header>
@@ -345,11 +344,10 @@ button{cursor:pointer;color:inherit;background:none}
   <section class="view" id="places">
     <div class="page-head">
       <div>
-        <p class="eyebrow">手動儲存並用可愛插圖分類</p>
+        <p class="eyebrow">搜尋地點自動抓取資訊，並用可愛插圖分類</p>
         <h1>最愛地點 📍</h1>
       </div>
       <div class="head-actions">
-        <button class="pill-btn" onclick="openGmapKeyModal()" id="gmap-status-btn">🔑 設定 Google API (啟用自動抓取)</button>
         <button class="primary-btn" onclick="openAddPlaceModal()">＋ 新增地點</button>
       </div>
     </div>
@@ -518,25 +516,6 @@ button{cursor:pointer;color:inherit;background:none}
   </div>
 </div>
 
-<div class="modal-backdrop" id="gmap-modal">
-  <div class="modal">
-    <div class="modal-head"><h2>🔑 設定 Google Maps API 金鑰</h2><button class="close-btn" onclick="closeGmapKeyModal()">×</button></div>
-    <p style="font-size:12px;color:#687770;line-height:1.6;margin-bottom:14px">
-      貼上您在 Google Cloud 申請的 <b>Maps JavaScript API</b> 與 <b>Places API (New)</b> 金鑰。<br>
-      <small style="color:#9aa59f">（金鑰僅安全儲存在您的瀏覽器本機端，不會上傳至外網）</small>
-    </p>
-    <div class="field">
-      <label>您的 API Key</label>
-      <input id="gmap-key-input" placeholder="AIzaSy..." autocomplete="off">
-    </div>
-    <div class="modal-foot">
-      <button class="danger-btn" style="margin-right:auto" onclick="clearGmapKey()">清除金鑰</button>
-      <button class="ghost-btn" onclick="closeGmapKeyModal()">取消</button>
-      <button class="primary-btn" onclick="saveGmapKey()">套用</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-backdrop" id="add-place-modal">
   <div class="modal">
     <div class="modal-head"><h2>📍 收藏地點</h2><button class="close-btn" onclick="closeAddPlaceModal()">×</button></div>
@@ -585,11 +564,17 @@ button{cursor:pointer;color:inherit;background:none}
 <div class="toast" id="toast"></div>
 
 <script>
+const PROXY_URL = 'https://acacia-everyday.s3311453038.workers.dev';
+
+localStorage.removeItem('bb3_gmap_key');
+
 let S = JSON.parse(localStorage.getItem('acacia_data')) || {
   events: [], tasks: [], shopping: [], places: [], favorites: [],
   calYear: new Date().getFullYear(), calMonth: new Date().getMonth(),
-  mapCat: '全部', gmapKey: localStorage.getItem('bb3_gmap_key') || ''
+  mapCat: '全部'
 };
+if (S.gmapKey) { delete S.gmapKey; }
+
 function save() { localStorage.setItem('acacia_data', JSON.stringify(S)); }
 function esc(str) { return String(str||'').replace(/[&<>'"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m])); }
 function toast(msg) {
@@ -728,26 +713,6 @@ function toLocalISO(d = new Date()) { const y = d.getFullYear(); const m = Strin
 const PLACE_CATS = { '餐廳': { icon: '🍝', bg: '#fff8e7' }, '甜點': { icon: '🍰', bg: '#fdf4ff' }, '咖啡': { icon: '☕', bg: '#f6e7d8' }, '飲料店': { icon: '🧋', bg: '#e0f2fe' }, '診所': { icon: '🏥', bg: '#ebf4ff' }, '便利商店': { icon: '🏪', bg: '#e8f7f0' }, '書局': { icon: '📚', bg: '#fef3c7' }, '服飾': { icon: '👗', bg: '#fff0f3' }, '公園': { icon: '🌳', bg: '#edf5eb' }, '景點': { icon: '🎡', bg: '#ffedd5' }, '學校': { icon: '🏫', bg: '#f3e8ff' }, '市場': { icon: '🧺', bg: '#ffedd5' }, '其他': { icon: '📍', bg: '#f3f4f6' } };
 const DEFAULT_PLACES = [ {id:101, name:'小日子手沖咖啡', cat:'咖啡', address:'台中市西屯區逢甲路', hours:'🚫 公休時間：星期一\n星期一: 休息\n星期二: 10:00–18:00', note:'平日下午去很適合帶筆電工作', url:''} ];
 
-function initPlacesEngine() {
-  const btn = document.getElementById('gmap-status-btn');
-  if (S.gmapKey) {
-    btn.textContent = '🔑 Google API (自動抓取已啟用)'; btn.classList.add('active');
-    if (!window.google || !window.google.maps) {
-      const s = document.createElement('script');
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(S.gmapKey)}&libraries=places&v=weekly&language=zh-TW&region=TW`;
-      s.async = true; s.onerror = () => toast('無法載入 Google Maps API，請檢查金鑰'); document.head.appendChild(s);
-    }
-  } else { btn.textContent = '🔑 設定 Google API (啟用自動抓取)'; btn.classList.remove('active'); }
-}
-
-function openGmapKeyModal() { document.getElementById('gmap-key-input').value = S.gmapKey; document.getElementById('gmap-modal').classList.add('open'); }
-function closeGmapKeyModal() { document.getElementById('gmap-modal').classList.remove('open'); }
-function saveGmapKey() {
-  const k = document.getElementById('gmap-key-input').value.trim(); if (!k) { toast('請輸入有效的 Google Maps API 金鑰'); return; }
-  localStorage.setItem('bb3_gmap_key', k); S.gmapKey = k; save(); closeGmapKeyModal(); toast('正在載入 Google Places (New) 引擎...'); setTimeout(() => location.reload(), 400);
-}
-function clearGmapKey() { localStorage.removeItem('bb3_gmap_key'); S.gmapKey = ''; save(); closeGmapKeyModal(); toast('已切換為純手動輸入模式'); setTimeout(() => location.reload(), 400); }
-
 function detectPlaceCategory(name = '', types = []) {
   const n = name.toLowerCase();
   const t = types.map(x => x.toLowerCase());
@@ -846,15 +811,15 @@ function buildCategoryNote({ cat, rating, userRatingsTotal, phone, editorial, re
 }
 
 function populatePlaceFields(place) {
-  const name = place.displayName || '';
+  const name = typeof place.displayName === 'string' ? place.displayName : (place.displayName?.text || '');
   const address = place.formattedAddress || '';
   const types = place.types || [];
   const weekdayText = place.regularOpeningHours?.weekdayDescriptions || [];
-  const url = place.googleMapsURI || '';
+  const url = place.googleMapsUri || place.googleMapsURI || '';
   const rating = place.rating;
   const userRatingsTotal = place.userRatingCount;
   const phone = place.nationalPhoneNumber || '';
-  const editorial = place.editorialSummary || '';
+  const editorial = typeof place.editorialSummary === 'string' ? place.editorialSummary : (place.editorialSummary?.text || '');
   const reviews = place.reviews || [];
 
   document.getElementById('np-name').value = name;
@@ -878,7 +843,6 @@ function populatePlaceFields(place) {
   toast(`✅ 已自動帶入「${guessedCat}」營業、公休與詳細資訊！`);
 }
 
-// 主動呼叫新版 Place.searchByText API，徹底解決下拉選單被遮擋或事件未觸發問題
 let searchTimer = null;
 let currentSearchPlaces = [];
 
@@ -890,7 +854,7 @@ function debouncedSearchPlace() {
     box.classList.remove('open');
     return;
   }
-  searchTimer = setTimeout(() => searchPlaceNow(true), 600);
+  searchTimer = setTimeout(() => searchPlaceNow(true), 650);
 }
 
 async function searchPlaceNow(isAutoSuggest = false) {
@@ -900,34 +864,26 @@ async function searchPlaceNow(isAutoSuggest = false) {
     if (!isAutoSuggest) toast('請先輸入要搜尋的地點名稱');
     return;
   }
-  if (!S.gmapKey || !window.google || !window.google.maps) {
-    toast('請先點擊右上角 🔑 設定 Google Maps API 金鑰');
-    return;
-  }
+
+  box.innerHTML = `<div class="place-search-item"><small>🔍 正在搜尋「${esc(q)}」...</small></div>`;
+  box.classList.add('open');
 
   try {
-    const { Place } = await google.maps.importLibrary('places');
-    const request = {
-      textQuery: q,
-      fields: [
-        'displayName',
-        'formattedAddress',
-        'regularOpeningHours',
-        'types',
-        'googleMapsURI',
-        'rating',
-        'userRatingCount',
-        'nationalPhoneNumber',
-        'editorialSummary',
-        'reviews'
-      ],
-      language: 'zh-TW',
-      region: 'tw',
-      maxResultCount: 5
-    };
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ textQuery: q })
+    });
 
-    const { places } = await Place.searchByText(request);
-    currentSearchPlaces = places || [];
+    const data = await res.json();
+
+    if (!res.ok) {
+      box.classList.remove('open');
+      toast(data.error || '搜尋失敗，請稍後再試或手動填寫');
+      return;
+    }
+
+    currentSearchPlaces = data.places || [];
 
     if (!currentSearchPlaces.length) {
       box.innerHTML = `<div class="place-search-item"><small>找不到「${esc(q)}」的相關地點，請試著加上縣市或路名</small></div>`;
@@ -935,23 +891,26 @@ async function searchPlaceNow(isAutoSuggest = false) {
       return;
     }
 
-    // 如果使用者是按 Enter 或按「搜尋」鈕，且只有一筆最精準結果，直接幫他帶入；否則顯示清單讓他點選
     if (!isAutoSuggest && currentSearchPlaces.length === 1) {
       populatePlaceFields(currentSearchPlaces[0]);
       return;
     }
 
-    box.innerHTML = currentSearchPlaces.map((p, idx) => `
-      <button type="button" class="place-search-item" onclick="selectSearchedPlace(${idx})">
-        <strong>${esc(p.displayName || '未命名地點')}</strong>
-        <small>${esc(p.formattedAddress || '')}</small>
-      </button>
-    `).join('');
+    box.innerHTML = currentSearchPlaces.map((p, idx) => {
+      const pName = typeof p.displayName === 'string' ? p.displayName : (p.displayName?.text || '未命名地點');
+      return `
+        <button type="button" class="place-search-item" onclick="selectSearchedPlace(${idx})">
+          <strong>${esc(pName)}</strong>
+          <small>${esc(p.formattedAddress || '')}</small>
+        </button>
+      `;
+    }).join('');
     box.classList.add('open');
 
   } catch (err) {
-    console.error('Place.searchByText 錯誤:', err);
-    toast('搜尋失敗：請確認 Google Cloud 已啟用 Places API (New) 且金鑰無誤');
+    console.error('代理搜尋錯誤:', err);
+    box.classList.remove('open');
+    toast('連線搜尋服務失敗，請檢查網路或手動輸入');
   }
 }
 
@@ -1212,7 +1171,7 @@ function renderCmdResults(q) {
 
 document.addEventListener('keydown', e => {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openCmdModal(); }
-  if (e.key === 'Escape') { closeEvModal(); closeCmdModal(); closeGmapKeyModal(); closeAddPlaceModal(); closeTodoModal(); closeExpenseModal(); closeBatchModal(); }
+  if (e.key === 'Escape') { closeEvModal(); closeCmdModal(); closeAddPlaceModal(); closeTodoModal(); closeExpenseModal(); closeBatchModal(); }
 });
 document.querySelectorAll('.modal-backdrop').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
 
@@ -1233,7 +1192,6 @@ function resetDemoData() {
 }
 
 initSample();
-initPlacesEngine();
 initToday();
 renderCalendar();
 showView('today');
